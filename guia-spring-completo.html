@@ -1,0 +1,2683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Spring Boot — Guia Completo do Zero</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   RESET & TOKENS
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:      #0f1117;
+  --ink2:     #1c2030;
+  --ink3:     #2a3050;
+  --paper:    #f7f6f1;
+  --paper2:   #eeecea;
+  --paper3:   #e4e1d9;
+  --line:     #d6d2c8;
+  --green:    #1a7a4a;
+  --green-bg: #e8f5ed;
+  --green-bd: #a8d5b8;
+  --blue:     #1a4fa8;
+  --blue-bg:  #e8f0fc;
+  --blue-bd:  #a8c0e8;
+  --amber:    #92600a;
+  --amber-bg: #fdf3dc;
+  --amber-bd: #e8cc80;
+  --red:      #a81a1a;
+  --red-bg:   #fce8e8;
+  --red-bd:   #e8a8a8;
+  --purple:   #5a1a92;
+  --purple-bg:#f0e8fc;
+  --code-bg:  #13161e;
+  --code-line:#1e2232;
+  --shadow:   0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 2px 8px rgba(0,0,0,.1), 0 8px 32px rgba(0,0,0,.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER / HERO
+═══════════════════════════════════════════ */
+.hero {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  min-height: 260px;
+}
+.hero-left {
+  padding: 48px 48px 40px;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255,255,255,.4); margin-bottom: 20px;
+}
+.hero-eyebrow span { color: #4ade80; }
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800; line-height: 1.05;
+  margin-bottom: 16px;
+  letter-spacing: -.02em;
+}
+.hero h1 em { color: #4ade80; font-style: normal; }
+.hero-desc { color: rgba(255,255,255,.55); font-size: 15px; line-height: 1.7; max-width: 520px; }
+.hero-right {
+  padding: 32px 28px;
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
+}
+.hero-stat {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px; padding: 14px 16px;
+}
+.hero-stat-label { font-size: 11px; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+.hero-stat-val { font-family: 'Fraunces', serif; font-size: 22px; color: #fff; }
+
+/* ═══════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════ */
+.progress-section {
+  background: var(--ink2);
+  padding: 16px 48px;
+  display: flex; align-items: center; gap: 20px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.prog-label { font-size: 12px; color: rgba(255,255,255,.4); white-space: nowrap; font-family: 'IBM Plex Mono', monospace; }
+.prog-track { flex: 1; height: 4px; background: rgba(255,255,255,.08); border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, #4ade80, #38bdf8); border-radius: 99px; transition: width .5s ease; width: 0%; }
+.prog-count { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4ade80; white-space: nowrap; }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.page-body { display: flex; max-width: 1100px; margin: 0 auto; padding: 40px 24px 100px; gap: 32px; }
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ */
+.sidebar {
+  width: 230px; flex-shrink: 0;
+  position: sticky; top: 24px; align-self: flex-start;
+}
+.sidebar-heading {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .12em; color: rgba(15,17,23,.35); margin-bottom: 10px; padding-left: 4px;
+}
+.nav-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 8px; cursor: pointer;
+  transition: background .15s, color .15s;
+  color: var(--ink3); font-size: 13px; font-weight: 500;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.nav-item:hover { background: var(--paper2); }
+.nav-item.active { background: var(--ink); color: var(--paper); border-color: transparent; }
+.nav-item.done { color: var(--green); }
+.nav-item.done .nav-dot { background: var(--green); color: #fff; }
+.nav-item.active .nav-dot { background: #4ade80; color: #000; }
+.nav-dot {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  background: var(--paper3); display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600;
+  transition: all .2s;
+}
+.nav-label { flex: 1; line-height: 1.2; }
+.nav-sub { font-size: 11px; opacity: .55; display: block; }
+
+/* ═══════════════════════════════════════════
+   MAIN AREA
+═══════════════════════════════════════════ */
+.main { flex: 1; min-width: 0; }
+
+/* ═══════════════════════════════════════════
+   STEP CARD
+═══════════════════════════════════════════ */
+.step { display: none; }
+.step.visible { display: block; animation: slideIn .25s ease; }
+@keyframes slideIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+.step-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+/* Card header */
+.card-header {
+  padding: 28px 32px 24px;
+  border-bottom: 1px solid var(--paper2);
+  display: flex; gap: 18px; align-items: flex-start;
+}
+.card-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0;
+}
+.card-meta { flex: 1; }
+.card-step-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.card-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; line-height: 1.15; margin-bottom: 5px; }
+.card-sub { font-size: 14px; color: var(--ink3); opacity: .7; }
+
+/* ═══════════════════════════════════════════
+   SECTION DIVIDERS
+═══════════════════════════════════════════ */
+.section { padding: 24px 32px 0; }
+.section:last-of-type { padding-bottom: 0; }
+
+.section-title {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .1em; color: rgba(15,17,23,.35);
+  margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--paper2);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   CALLOUT BOXES
+═══════════════════════════════════════════ */
+.callout {
+  border-radius: 10px; padding: 16px 18px; margin-bottom: 16px;
+  border: 1px solid;
+}
+.callout-title {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; margin-bottom: 8px;
+}
+.callout p { font-size: 14px; line-height: 1.7; }
+.callout p + p { margin-top: 8px; }
+.callout strong { font-weight: 600; }
+.callout ul { padding-left: 18px; font-size: 14px; line-height: 1.9; }
+.callout.info    { background: var(--blue-bg);   border-color: var(--blue-bd);   }
+.callout.info    .callout-title { color: var(--blue); }
+.callout.tip     { background: var(--green-bg);  border-color: var(--green-bd);  }
+.callout.tip     .callout-title { color: var(--green); }
+.callout.warn    { background: var(--amber-bg);  border-color: var(--amber-bd);  }
+.callout.warn    .callout-title { color: var(--amber); }
+.callout.concept { background: var(--purple-bg); border-color: #c8a8e8; }
+.callout.concept .callout-title { color: var(--purple); }
+
+/* ═══════════════════════════════════════════
+   INSTRUCTION STEPS
+═══════════════════════════════════════════ */
+.steps-list { display: flex; flex-direction: column; gap: 0; }
+.step-item {
+  display: flex; gap: 16px; padding: 14px 0;
+  border-bottom: 1px solid var(--paper2);
+  position: relative;
+}
+.step-item:last-child { border-bottom: none; }
+.step-bullet {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: var(--ink); color: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;
+  margin-top: 1px;
+}
+.step-content { flex: 1; }
+.step-content strong { display: block; font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+.step-content p { font-size: 13.5px; color: var(--ink3); line-height: 1.65; }
+.step-content p + p { margin-top: 6px; }
+.step-content code {
+  background: var(--paper2); border: 1px solid var(--line);
+  padding: 1px 6px; border-radius: 5px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink);
+}
+
+/* ═══════════════════════════════════════════
+   TERMINAL / COMMAND BLOCKS
+═══════════════════════════════════════════ */
+.terminal-wrap { margin-bottom: 16px; }
+.terminal-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: rgba(255,255,255,.35);
+  background: #0a0c11; padding: 8px 16px 0;
+  border-radius: 10px 10px 0 0; border: 1px solid rgba(255,255,255,.06);
+  border-bottom: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal {
+  background: #0a0c11; border: 1px solid rgba(255,255,255,.07);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 16px 18px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.85;
+  overflow-x: auto;
+}
+.terminal .prompt { color: #4ade80; user-select: none; }
+.terminal .cmd    { color: #e2e8f0; }
+.terminal .out    { color: #64748b; }
+.terminal .ok     { color: #4ade80; }
+.terminal .err    { color: #f87171; }
+.terminal .comment{ color: #475569; }
+.terminal .hi     { color: #fbbf24; }
+.terminal .gap    { display: block; height: 6px; }
+
+/* ═══════════════════════════════════════════
+   CODE BLOCKS
+═══════════════════════════════════════════ */
+.code-block { margin-bottom: 16px; position: relative; }
+.code-header {
+  background: var(--code-line); border: 1px solid rgba(255,255,255,.07);
+  border-bottom: none; border-radius: 10px 10px 0 0;
+  padding: 9px 16px; display: flex; align-items: center; justify-content: space-between;
+}
+.code-fname {
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.code-fname .path { color: rgba(255,255,255,.3); }
+.code-fname .file { color: #fbbf24; font-weight: 600; }
+.copy-btn {
+  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.4); padding: 3px 12px; border-radius: 6px;
+  cursor: pointer; transition: all .15s;
+}
+.copy-btn:hover { background: rgba(255,255,255,.1); color: rgba(255,255,255,.8); }
+.copy-btn.copied { background: rgba(74,222,128,.15); border-color: rgba(74,222,128,.4); color: #4ade80; }
+pre {
+  background: var(--code-bg); border: 1px solid rgba(255,255,255,.07);
+  border-top: none; border-radius: 0 0 10px 10px;
+  padding: 20px 18px; overflow-x: auto;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 1.8;
+  tab-size: 2;
+}
+
+/* ── Syntax tokens ── */
+.kw  { color: #c792ea; font-weight: 600; }
+.an  { color: #82aaff; }
+.st  { color: #c3e88d; }
+.cm  { color: #546e7a; font-style: italic; }
+.tp  { color: #ffcb6b; }
+.nm  { color: #f78c6c; }
+.mt  { color: #89ddff; }
+.op  { color: #89ddff; }
+.prop{ color: #80cbc4; }
+
+/* ── Annotation explanations ── */
+.anno-explain {
+  background: var(--amber-bg); border: 1px solid var(--amber-bd);
+  border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;
+  font-size: 13px; line-height: 1.65;
+}
+.anno-explain strong { color: var(--amber); font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+/* ═══════════════════════════════════════════
+   FILE STRUCTURE TREE
+═══════════════════════════════════════════ */
+.file-tree {
+  background: var(--code-bg); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 2;
+}
+.ft-dir  { color: #82aaff; }
+.ft-file { color: #e2e8f0; }
+.ft-new  { color: #4ade80; }
+.ft-note { color: #546e7a; }
+.ft-sep  { border-top: 1px solid rgba(255,255,255,.05); margin: 6px 0; }
+
+/* ═══════════════════════════════════════════
+   INFO GRID
+═══════════════════════════════════════════ */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.info-card {
+  background: var(--paper2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 16px;
+}
+.info-card-icon { font-size: 22px; margin-bottom: 8px; }
+.info-card-title { font-weight: 600; font-size: 13px; margin-bottom: 5px; }
+.info-card-text { font-size: 12.5px; color: var(--ink3); line-height: 1.55; }
+.info-card-text code {
+  background: var(--paper3); border: 1px solid var(--line);
+  padding: 1px 5px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+}
+
+/* ═══════════════════════════════════════════
+   HTTP BADGE TABLE
+═══════════════════════════════════════════ */
+.http-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
+.http-table th {
+  background: var(--paper2); padding: 8px 12px; text-align: left;
+  font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink3); border: 1px solid var(--line);
+}
+.http-table td { padding: 9px 12px; border: 1px solid var(--line); vertical-align: top; line-height: 1.5; }
+.http-table tr:nth-child(even) td { background: var(--paper2); }
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;
+}
+.badge-get    { background: #dbeafe; color: #1d4ed8; }
+.badge-post   { background: #dcfce7; color: #15803d; }
+.badge-put    { background: #fef9c3; color: #a16207; }
+.badge-patch  { background: #f3e8ff; color: #7e22ce; }
+.badge-delete { background: #fee2e2; color: #b91c1c; }
+.badge-200 { background: #dcfce7; color: #15803d; }
+.badge-201 { background: #d1fae5; color: #065f46; }
+.badge-204 { background: #e0f2fe; color: #0369a1; }
+.badge-400 { background: #fef9c3; color: #a16207; }
+.badge-404 { background: #fee2e2; color: #b91c1c; }
+.badge-409 { background: #f3e8ff; color: #7e22ce; }
+
+/* ═══════════════════════════════════════════
+   CARD FOOTER
+═══════════════════════════════════════════ */
+.card-footer {
+  padding: 20px 32px;
+  border-top: 1px solid var(--paper2);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--paper2);
+}
+.done-badge {
+  display: none; align-items: center; gap: 6px;
+  color: var(--green); font-size: 13px; font-weight: 600;
+}
+.done-badge.show { display: flex; }
+.btn-row { display: flex; gap: 8px; margin-left: auto; }
+.btn {
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  padding: 9px 20px; border-radius: 9px; border: none; cursor: pointer;
+  transition: all .15s;
+}
+.btn-primary {
+  background: var(--ink); color: var(--paper);
+}
+.btn-primary:hover { background: var(--ink2); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+.btn-primary:disabled { opacity: .4; cursor: default; transform: none; box-shadow: none; }
+.btn-ghost {
+  background: #fff; color: var(--ink); border: 1px solid var(--line);
+}
+.btn-ghost:hover { border-color: var(--ink); }
+.btn-success {
+  background: var(--green); color: #fff;
+}
+.btn-success:hover { background: #145c38; transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════
+   FINISH SCREEN
+═══════════════════════════════════════════ */
+#finish {
+  display: none; text-align: center;
+  background: #fff; border: 1px solid var(--line);
+  border-radius: 16px; padding: 64px 40px;
+  box-shadow: var(--shadow);
+}
+#finish.show { display: block; animation: slideIn .4s ease; }
+#finish .big { font-size: 72px; margin-bottom: 20px; }
+#finish h2 { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+#finish h2 span { color: var(--green); }
+#finish p { font-size: 15px; color: var(--ink3); line-height: 1.7; max-width: 520px; margin: 0 auto 28px; }
+.next-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.next-chip {
+  background: var(--paper2); border: 1px solid var(--line);
+  padding: 6px 14px; border-radius: 100px; font-size: 13px; color: var(--ink);
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 800px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-right { display: none; }
+  .hero-left { padding: 32px 20px; }
+  .progress-section { padding: 14px 20px; }
+  .page-body { flex-direction: column; padding: 20px 16px 80px; }
+  .sidebar { width: 100%; position: static; }
+  .nav-list { flex-direction: row; flex-wrap: wrap; }
+  .nav-item { flex: 0 0 auto; }
+  .nav-label { display: none; }
+  .section { padding: 18px 18px 0; }
+  .card-header { padding: 20px 18px; }
+  .card-footer { padding: 16px 18px; }
+  .info-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-eyebrow">☕ <span>Java</span> + Spring Boot · Guia do Absoluto Zero</div>
+      <h1>Aprenda a montar um<br><em>CRUD completo</em><br>do zero</h1>
+      <p class="hero-desc">Instalação, código explicado linha a linha, banco de dados, testes — tudo que você precisa para subir sua primeira API Java e ver funcionando no navegador.</p>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat"><div class="hero-stat-label">Etapas</div><div class="hero-stat-val">10 passos</div></div>
+      <div class="hero-stat"><div class="hero-stat-label">Nível</div><div class="hero-stat-val">Absoluto zero</div></div>
+      <div class="hero-stat"><div class="hero-stat-label">Resultado</div><div class="hero-stat-val">API REST rodando</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-section">
+  <span class="prog-label">Progresso</span>
+  <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  <span class="prog-count" id="progText">0 / 10</span>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE BODY
+══════════════════════════════════════════════════ -->
+<div class="page-body">
+
+  <!-- SIDEBAR NAV -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Etapas</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" onclick="go(0)"><div class="nav-dot">1</div><div class="nav-label">Instalar Java<span class="nav-sub">JDK 17</span></div></li>
+      <li class="nav-item" onclick="go(1)"><div class="nav-dot">2</div><div class="nav-label">Instalar Maven<span class="nav-sub">Gerenciador</span></div></li>
+      <li class="nav-item" onclick="go(2)"><div class="nav-dot">3</div><div class="nav-label">Instalar IntelliJ<span class="nav-sub">IDE</span></div></li>
+      <li class="nav-item" onclick="go(3)"><div class="nav-dot">4</div><div class="nav-label">Criar Projeto<span class="nav-sub">Spring Initializr</span></div></li>
+      <li class="nav-item" onclick="go(4)"><div class="nav-dot">5</div><div class="nav-label">Banco + Config<span class="nav-sub">H2 + properties</span></div></li>
+      <li class="nav-item" onclick="go(5)"><div class="nav-dot">6</div><div class="nav-label">Model<span class="nav-sub">Entidades JPA</span></div></li>
+      <li class="nav-item" onclick="go(6)"><div class="nav-dot">7</div><div class="nav-label">Repository<span class="nav-sub">Acesso ao banco</span></div></li>
+      <li class="nav-item" onclick="go(7)"><div class="nav-dot">8</div><div class="nav-label">Service + DTOs<span class="nav-sub">Regras de negócio</span></div></li>
+      <li class="nav-item" onclick="go(8)"><div class="nav-dot">9</div><div class="nav-label">Controller<span class="nav-sub">Endpoints HTTP</span></div></li>
+      <li class="nav-item" onclick="go(9)"><div class="nav-dot">10</div><div class="nav-label">Rodar e Testar<span class="nav-sub">Postman</span></div></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+<!-- ════════════════════════════════════════════════════
+     STEP 1 — INSTALAR JAVA
+════════════════════════════════════════════════════ -->
+<div class="step visible" id="s0">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#dcfce7;">☕</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--green)">Etapa 1 de 10 · Instalação</div>
+      <div class="card-title">Instalar o Java (JDK 17)</div>
+      <div class="card-sub">A linguagem em si. Sem Java instalado, nada roda.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💡 O que é o JDK?</div>
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — Java e o JDK</div>
+      <p><strong>Java</strong> é uma linguagem de programação. Quando você escreve código Java, o computador não entende diretamente — ele precisa de um "tradutor".</p>
+      <p>O <strong>JDK</strong> (Java Development Kit = Kit de Desenvolvimento Java) é esse tradutor. Ele tem tudo que você precisa para <strong>escrever, compilar e executar</strong> programas Java.</p>
+      <p>A versão <strong>17</strong> é a LTS (Long Term Support) — ou seja, é mantida por muitos anos e é a recomendada para projetos sérios.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🪟 Instalação no Windows</div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet">1</div>
+        <div class="step-content">
+          <strong>Baixe o instalador</strong>
+          <p>Acesse <code>adoptium.net</code> no navegador. Clique em "Latest LTS Release" e depois baixe o <strong>.msi para Windows</strong>.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">2</div>
+        <div class="step-content">
+          <strong>Execute o instalador</strong>
+          <p>Abra o arquivo <code>.msi</code> baixado. Clique em "Next" em tudo. Na tela que mostrar opções, <strong>marque</strong> a opção "Set JAVA_HOME variable" se aparecer.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">3</div>
+        <div class="step-content">
+          <strong>Verificar a instalação</strong>
+          <p>Abra o <strong>Prompt de Comando</strong> (Win+R → digite <code>cmd</code> → Enter) e execute:</p>
+        </div>
+      </div>
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-label"><div class="tl-dot" style="background:#ff5f57"></div><div class="tl-dot" style="background:#febc2e"></div><div class="tl-dot" style="background:#28c840"></div>&nbsp;Prompt de Comando (cmd)</div>
+      <div class="terminal">
+        <div><span class="prompt">C:\> </span><span class="cmd">java -version</span></div>
+        <div><span class="out">openjdk version "17.0.9" 2023-10-17</span></div>
+        <div><span class="out">OpenJDK Runtime Environment Temurin-17...</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Se aparecer algo parecido acima, está instalado! ✅</span></div>
+        <div><span class="comment"># Se aparecer erro, reinicie o computador e tente novamente.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🍎 Instalação no macOS</div>
+    <div class="callout tip">
+      <div class="callout-title">✅ Método recomendado — Homebrew</div>
+      <p>O Homebrew é um gerenciador de pacotes para Mac. Se não tiver, instale primeiro com o comando abaixo, depois instale o Java.</p>
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-label"><div class="tl-dot" style="background:#ff5f57"></div><div class="tl-dot" style="background:#febc2e"></div><div class="tl-dot" style="background:#28c840"></div>&nbsp;Terminal (Mac)</div>
+      <div class="terminal">
+        <div><span class="comment"># Passo 1: Instalar o Homebrew (se não tiver)</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Passo 2: Instalar o Java 17</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">brew install --cask temurin@17</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Passo 3: Verificar</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">java -version</span></div>
+        <div><span class="ok">openjdk version "17.0.9" ...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🐧 Instalação no Linux (Ubuntu/Debian)</div>
+    <div class="terminal-wrap">
+      <div class="terminal-label"><div class="tl-dot" style="background:#ff5f57"></div><div class="tl-dot" style="background:#febc2e"></div><div class="tl-dot" style="background:#28c840"></div>&nbsp;Terminal (Linux)</div>
+      <div class="terminal">
+        <div><span class="comment"># Atualizar lista de pacotes</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">sudo apt update</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Instalar Java 17</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">sudo apt install openjdk-17-jdk -y</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Verificar</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">java -version</span></div>
+        <div><span class="ok">openjdk version "17.0.9" ...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Se o comando "java" não for reconhecido</div>
+      <p>No Windows, pode ser necessário adicionar o Java ao PATH do sistema. O instalador Temurin faz isso automaticamente. Se não funcionar, <strong>reinicie o computador</strong> e tente de novo. Se ainda não funcionar, pesquise "como adicionar java ao path windows 10".</p>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done0">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-success" onclick="done(0)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(1)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 2 — INSTALAR MAVEN
+════════════════════════════════════════════════════ -->
+<div class="step" id="s1">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#dbeafe;">📦</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--blue)">Etapa 2 de 10 · Instalação</div>
+      <div class="card-title">Instalar o Maven</div>
+      <div class="card-sub">O gerenciador que baixa as dependências do projeto automaticamente.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — O que é Maven?</div>
+      <p>Imagine que você vai cozinhar uma receita e ela pede 15 ingredientes. Você teria que ir ao mercado, comprar cada um, trazer, organizar...</p>
+      <p>O <strong>Maven</strong> faz exatamente isso com bibliotecas Java. Você lista no arquivo <code>pom.xml</code> tudo que precisa (Spring Boot, H2, Lombok...) e o Maven <strong>baixa tudo da internet automaticamente</strong>. Sem Maven, você teria que baixar cada biblioteca manualmente e adicionar ao projeto.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🪟 Windows</div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet">1</div>
+        <div class="step-content">
+          <strong>Baixar</strong>
+          <p>Acesse <code>maven.apache.org/download.cgi</code> e baixe o arquivo <code>apache-maven-3.x.x-bin.zip</code>.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">2</div>
+        <div class="step-content">
+          <strong>Extrair</strong>
+          <p>Extraia o ZIP para uma pasta simples, por exemplo: <code>C:\maven</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">3</div>
+        <div class="step-content">
+          <strong>Adicionar ao PATH</strong>
+          <p>Pesquise "variáveis de ambiente" no Windows → clique em "Editar variáveis do sistema" → "Variáveis de ambiente" → em "Path" clique "Editar" → "Novo" → adicione: <code>C:\maven\bin</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">4</div>
+        <div class="step-content">
+          <strong>Verificar</strong>
+          <p>Feche e reabra o Prompt de Comando. Execute:</p>
+        </div>
+      </div>
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-label"><div class="tl-dot" style="background:#ff5f57"></div><div class="tl-dot" style="background:#febc2e"></div><div class="tl-dot" style="background:#28c840"></div>&nbsp;cmd</div>
+      <div class="terminal">
+        <div><span class="prompt">C:\> </span><span class="cmd">mvn -version</span></div>
+        <div><span class="ok">Apache Maven 3.9.x</span></div>
+        <div><span class="out">Maven home: C:\maven</span></div>
+        <div><span class="out">Java version: 17.0.9 ...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="section-title">🍎 macOS / 🐧 Linux</div>
+    <div class="terminal-wrap">
+      <div class="terminal-label"><div class="tl-dot" style="background:#ff5f57"></div><div class="tl-dot" style="background:#febc2e"></div><div class="tl-dot" style="background:#28c840"></div>&nbsp;Terminal</div>
+      <div class="terminal">
+        <div><span class="comment"># macOS (via Homebrew)</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">brew install maven</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Linux (Ubuntu/Debian)</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">sudo apt install maven -y</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Verificar nos dois sistemas</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">mvn -version</span></div>
+        <div><span class="ok">Apache Maven 3.x.x ...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done1">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(0)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(1)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(2)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 3 — INSTALAR INTELLIJ
+════════════════════════════════════════════════════ -->
+<div class="step" id="s2">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#f3e8ff;">💻</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--purple)">Etapa 3 de 10 · Instalação</div>
+      <div class="card-title">Instalar o IntelliJ IDEA + Postman</div>
+      <div class="card-sub">A IDE onde você vai escrever o código, e o Postman para testar.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — O que é uma IDE?</div>
+      <p><strong>IDE</strong> (Integrated Development Environment) é um editor de código inteligente. Não é um bloco de notas — a IDE <strong>entende Java</strong>, sugere completações, aponta erros enquanto você digita, organiza os arquivos, roda o projeto com um clique.</p>
+      <p>O <strong>IntelliJ IDEA Community</strong> é gratuito, e é a melhor IDE para Java no mercado.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-icon">💻</div>
+        <div class="info-card-title">IntelliJ IDEA Community</div>
+        <div class="info-card-text">Acesse <code>jetbrains.com/idea/download</code> e baixe a versão <strong>Community</strong> (gratuita). Instale como qualquer programa.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🔬</div>
+        <div class="info-card-title">Postman</div>
+        <div class="info-card-text">Acesse <code>postman.com/downloads</code> e instale. Você vai usar para enviar requisições HTTP para a sua API e ver as respostas.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔌 Configurar Lombok no IntelliJ</div>
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Passo obrigatório — sem isso o Lombok não funciona</div>
+      <p>Lombok gera código automaticamente (getters, setters, construtores). O IntelliJ precisa de um plugin para entendê-lo.</p>
+    </div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet">1</div>
+        <div class="step-content">
+          <strong>Abrir configurações</strong>
+          <p>No IntelliJ: <code>File → Settings</code> (Windows/Linux) ou <code>IntelliJ IDEA → Preferences</code> (Mac)</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">2</div>
+        <div class="step-content">
+          <strong>Instalar o plugin Lombok</strong>
+          <p>Vá em <code>Plugins</code> → pesquise <strong>"Lombok"</strong> → clique em <strong>Install</strong> → reinicie o IntelliJ.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">3</div>
+        <div class="step-content">
+          <strong>Habilitar processamento de anotações</strong>
+          <p>Vá em <code>Settings → Build → Compiler → Annotation Processors</code> → marque <strong>"Enable annotation processing"</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="callout tip">
+      <div class="callout-title">✅ Tudo instalado?</div>
+      <p>Se você chegou até aqui com Java, Maven e IntelliJ instalados — parabéns! A parte mais chata acabou. Agora vem a parte divertida: criar o projeto. 🚀</p>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done2">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(1)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(2)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(3)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 4 — CRIAR PROJETO
+════════════════════════════════════════════════════ -->
+<div class="step" id="s3">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#fef9c3;">🏗️</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--amber)">Etapa 4 de 10 · Projeto</div>
+      <div class="card-title">Criar o Projeto Spring Boot</div>
+      <div class="card-sub">Gerar a estrutura base e entender cada arquivo criado.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — O que é Spring Boot?</div>
+      <p><strong>Spring</strong> é um framework (conjunto de ferramentas) para Java que facilita muito criar aplicações. <strong>Spring Boot</strong> é a versão "autoconfigurada" — ele toma decisões por você e você escreve muito menos código para ter tudo funcionando.</p>
+      <p>Antes do Spring Boot, configurar um servidor Java levava dias. Com Spring Boot, em minutos você tem um servidor rodando.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌐 Opção A: Spring Initializr (recomendado)</div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet">1</div>
+        <div class="step-content">
+          <strong>Acesse start.spring.io</strong>
+          <p>Este site gera a estrutura do projeto automaticamente.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">2</div>
+        <div class="step-content">
+          <strong>Configure assim:</strong>
+          <p>Project: <code>Maven</code> · Language: <code>Java</code> · Spring Boot: <code>3.2.x</code><br>
+          Group: <code>com.projeto</code> · Artifact: <code>biblioteca</code> · Java: <code>17</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">3</div>
+        <div class="step-content">
+          <strong>Adicionar dependências</strong>
+          <p>Clique em "ADD DEPENDENCIES" e busque/adicione: <code>Spring Web</code>, <code>Spring Data JPA</code>, <code>H2 Database</code>, <code>Validation</code>, <code>Lombok</code>.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">4</div>
+        <div class="step-content">
+          <strong>GENERATE → Extrair → Abrir no IntelliJ</strong>
+          <p>Clique em GENERATE, um ZIP vai baixar. Extraia em uma pasta (ex: <code>C:\projetos\biblioteca</code>) e abra no IntelliJ: <code>File → Open → selecionar a pasta</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📁 Estrutura que você vai criar</div>
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Você vai criar estas pastas e arquivos manualmente</div>
+      <p>O Spring Initializr gera a estrutura base. Você vai <strong>criar</strong> as subpastas abaixo dentro de <code>src/main/java/com/projeto/biblioteca/</code></p>
+    </div>
+    <div class="file-tree">
+      <div><span class="ft-dir">📁 biblioteca/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">📄 pom.xml</span>  <span class="ft-note">← configuração Maven</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">📁 src/main/java/com/projeto/biblioteca/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 BibliotecaApplication.java</span>  <span class="ft-note">← ponto de entrada</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📁 model/</span>  <span class="ft-note">← classes que viram tabelas</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 Autor.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 Livro.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📁 dto/</span>  <span class="ft-note">← dados de entrada/saída da API</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 AutorDTO.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 LivroDTO.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📁 repository/</span>  <span class="ft-note">← acesso ao banco de dados</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 AutorRepository.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 LivroRepository.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📁 service/</span>  <span class="ft-note">← regras de negócio</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 AutorService.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 LivroService.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📁 controller/</span>  <span class="ft-note">← endpoints HTTP</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 AutorController.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 LivroController.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📁 exception/</span>  <span class="ft-note">← tratamento de erros</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 ResourceNotFoundException.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 BusinessException.java</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 GlobalExceptionHandler.java</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">📁 src/main/resources/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 application.properties</span>  <span class="ft-note">← configurações</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">📄 data.sql</span>  <span class="ft-note">← dados de exemplo</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 O pom.xml explicado</div>
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — pom.xml</div>
+      <p>O <strong>pom.xml</strong> (Project Object Model) é o arquivo que diz ao Maven quem é o seu projeto e do que ele depende. É como uma lista de compras — você lista o que precisa, o Maven busca.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">biblioteca/</span><span class="file">pom.xml</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="cm">&lt;!-- O pom.xml fica na RAIZ do projeto (pasta biblioteca/) --&gt;</span>
+&lt;<span class="kw">project</span> xmlns=<span class="st">"http://maven.apache.org/POM/4.0.0"</span>&gt;
+  &lt;<span class="kw">modelVersion</span>&gt;4.0.0&lt;/<span class="kw">modelVersion</span>&gt;
+
+  <span class="cm">&lt;!--
+    PARENT: herdamos tudo do Spring Boot.
+    Ele já definiu versões testadas de todas as bibliotecas.
+    Não precisamos nos preocupar com conflitos de versão.
+  --&gt;</span>
+  &lt;<span class="kw">parent</span>&gt;
+    &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+    &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-parent&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;<span class="kw">version</span>&gt;3.2.0&lt;/<span class="kw">version</span>&gt;
+    &lt;<span class="kw">relativePath</span>/&gt;
+  &lt;/<span class="kw">parent</span>&gt;
+
+  <span class="cm">&lt;!-- Identidade do projeto --&gt;</span>
+  &lt;<span class="kw">groupId</span>&gt;com.projeto&lt;/<span class="kw">groupId</span>&gt;     <span class="cm">&lt;!-- sua "empresa" --&gt;</span>
+  &lt;<span class="kw">artifactId</span>&gt;biblioteca&lt;/<span class="kw">artifactId</span>&gt; <span class="cm">&lt;!-- nome do projeto --&gt;</span>
+  &lt;<span class="kw">version</span>&gt;0.0.1-SNAPSHOT&lt;/<span class="kw">version</span>&gt;  <span class="cm">&lt;!-- versão atual --&gt;</span>
+  &lt;<span class="kw">packaging</span>&gt;jar&lt;/<span class="kw">packaging</span>&gt;         <span class="cm">&lt;!-- empacota como .jar executável --&gt;</span>
+
+  &lt;<span class="kw">properties</span>&gt;
+    &lt;<span class="kw">java.version</span>&gt;17&lt;/<span class="kw">java.version</span>&gt; <span class="cm">&lt;!-- usamos Java 17 --&gt;</span>
+  &lt;/<span class="kw">properties</span>&gt;
+
+  &lt;<span class="kw">dependencies</span>&gt;
+
+    <span class="cm">&lt;!--
+      SPRING WEB
+      Dá tudo para criar uma API REST:
+      - Servidor HTTP embutido (Tomcat) — sem instalar nada
+      - @RestController, @GetMapping, @PostMapping...
+      - Conversão automática Java ↔ JSON
+    --&gt;</span>
+    &lt;<span class="kw">dependency</span>&gt;
+      &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+      &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-web&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+
+    <span class="cm">&lt;!--
+      SPRING DATA JPA
+      JPA = Java Persistence API
+      Permite trabalhar com banco de dados usando objetos Java.
+      Você cria uma classe Java → ela vira uma tabela no banco.
+      Hibernate é a implementação por baixo.
+    --&gt;</span>
+    &lt;<span class="kw">dependency</span>&gt;
+      &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+      &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-data-jpa&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+
+    <span class="cm">&lt;!--
+      VALIDATION
+      Permite validar dados recebidos com anotações simples:
+      @NotBlank — campo não pode ser vazio
+      @Size     — tamanho mínimo/máximo
+      @Min/@Max — valor mínimo/máximo para números
+    --&gt;</span>
+    &lt;<span class="kw">dependency</span>&gt;
+      &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+      &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-validation&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+
+    <span class="cm">&lt;!--
+      H2 DATABASE
+      Banco de dados que roda DENTRO da aplicação, na memória RAM.
+      Não precisa instalar nada separado.
+      Dados somem ao reiniciar (perfeito para aprender!).
+      scope=runtime: só usado quando a app está rodando.
+    --&gt;</span>
+    &lt;<span class="kw">dependency</span>&gt;
+      &lt;<span class="kw">groupId</span>&gt;com.h2database&lt;/<span class="kw">groupId</span>&gt;
+      &lt;<span class="kw">artifactId</span>&gt;h2&lt;/<span class="kw">artifactId</span>&gt;
+      &lt;<span class="kw">scope</span>&gt;runtime&lt;/<span class="kw">scope</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+
+    <span class="cm">&lt;!--
+      LOMBOK
+      Gera código repetitivo automaticamente. Sem ele:
+      - Para cada campo, você escreveria getNome(), setNome()...
+      - Com Lombok, só coloca @Getter @Setter na classe.
+      optional=true: só usado na compilação, não no jar final.
+    --&gt;</span>
+    &lt;<span class="kw">dependency</span>&gt;
+      &lt;<span class="kw">groupId</span>&gt;org.projectlombok&lt;/<span class="kw">groupId</span>&gt;
+      &lt;<span class="kw">artifactId</span>&gt;lombok&lt;/<span class="kw">artifactId</span>&gt;
+      &lt;<span class="kw">optional</span>&gt;true&lt;/<span class="kw">optional</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+
+    <span class="cm">&lt;!-- TESTES: JUnit 5 + Mockito (só usado nos testes) --&gt;</span>
+    &lt;<span class="kw">dependency</span>&gt;
+      &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+      &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-test&lt;/<span class="kw">artifactId</span>&gt;
+      &lt;<span class="kw">scope</span>&gt;test&lt;/<span class="kw">scope</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+
+  &lt;/<span class="kw">dependencies</span>&gt;
+
+  &lt;<span class="kw">build</span>&gt;
+    &lt;<span class="kw">plugins</span>&gt;
+      <span class="cm">&lt;!-- Plugin que cria o JAR executável final --&gt;</span>
+      &lt;<span class="kw">plugin</span>&gt;
+        &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+        &lt;<span class="kw">artifactId</span>&gt;spring-boot-maven-plugin&lt;/<span class="kw">artifactId</span>&gt;
+      &lt;/<span class="kw">plugin</span>&gt;
+    &lt;/<span class="kw">plugins</span>&gt;
+  &lt;/<span class="kw">build</span>&gt;
+&lt;/<span class="kw">project</span>&gt;</pre>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="callout tip">
+      <div class="callout-title">✅ Após abrir no IntelliJ</div>
+      <p>Quando você abrir a pasta no IntelliJ, ele vai detectar o pom.xml e perguntar se quer importar como projeto Maven. Clique em <strong>"Trust Project"</strong> e depois <strong>"Load Maven Changes"</strong>. O Maven vai baixar todas as dependências (pode demorar alguns minutos na primeira vez, dependendo da internet).</p>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done3">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(2)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(3)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(4)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 5 — BANCO + CONFIG
+════════════════════════════════════════════════════ -->
+<div class="step" id="s4">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#dcfce7;">🗄️</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--green)">Etapa 5 de 10 · Configuração</div>
+      <div class="card-title">Banco de Dados + application.properties</div>
+      <div class="card-sub">Configurar o H2 e criar os dados iniciais de exemplo.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — O que é o H2 e o application.properties?</div>
+      <p>O <strong>H2</strong> é um banco de dados que roda completamente dentro da sua aplicação Java, na memória RAM. Você não precisa instalar MySQL, PostgreSQL nem nada separado. Ao iniciar a app, o banco cria as tabelas; ao desligar, tudo some. Perfeito para aprender!</p>
+      <p>O <strong>application.properties</strong> é o arquivo de configuração do Spring Boot. Ele fica em <code>src/main/resources/</code> e o Spring lê ele ao iniciar para saber: em qual porta rodar, como conectar ao banco, que nível de log mostrar, etc.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Crie: src/main/resources/application.properties</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">src/main/resources/</span><span class="file">application.properties</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="cm"># ─────────────────────────────────────────────────────────────
+# NOME E PORTA
+# A API vai rodar em: http://localhost:8080
+# ─────────────────────────────────────────────────────────────</span>
+spring.application.name=biblioteca
+server.port=8080
+
+<span class="cm"># ─────────────────────────────────────────────────────────────
+# BANCO DE DADOS H2
+#
+# jdbc:h2:mem:biblioteca = banco em MEMÓRIA chamado "biblioteca"
+#   mem: = in-memory (na RAM, sem arquivo em disco)
+#   MODE=MySQL = simula comportamento do MySQL
+#   DB_CLOSE_DELAY=-1 = mantém o banco vivo enquanto app roda
+# ─────────────────────────────────────────────────────────────</span>
+spring.datasource.url=jdbc:h2:mem:biblioteca;MODE=MySQL;DB_CLOSE_DELAY=-1
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+<span class="cm"># ─────────────────────────────────────────────────────────────
+# CONSOLE WEB DO H2
+#
+# Habilita uma interface visual para ver o banco de dados!
+# Acesse: http://localhost:8080/h2-console
+# JDBC URL: jdbc:h2:mem:biblioteca | User: sa | Senha: (vazio)
+# ─────────────────────────────────────────────────────────────</span>
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+<span class="cm"># ─────────────────────────────────────────────────────────────
+# JPA / HIBERNATE
+#
+# ddl-auto define o que o Hibernate faz com o banco ao iniciar:
+#   create-drop = APAGA e RECRIA tabelas a cada reinício (ótimo para dev!)
+#   update      = mantém dados, só atualiza estrutura se mudou
+#   none        = não faz nada automaticamente (produção)
+#
+# show-sql = mostra no console cada SQL gerado (ótimo para aprender!)
+# format_sql = formata o SQL para ser legível
+# ─────────────────────────────────────────────────────────────</span>
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+<span class="cm"># ─────────────────────────────────────────────────────────────
+# DADOS INICIAIS
+#
+# spring.sql.init.mode=always = executa o data.sql ao iniciar
+# defer-datasource = garante que as tabelas existam ANTES do data.sql
+# ─────────────────────────────────────────────────────────────</span>
+spring.sql.init.mode=always
+spring.jpa.defer-datasource-initialization=true</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌱 Crie: src/main/resources/data.sql</div>
+    <div class="callout info">
+      <div class="callout-title">ℹ️ O que é o data.sql?</div>
+      <p>Este arquivo SQL é executado automaticamente toda vez que a aplicação inicia. Ele insere dados de exemplo no banco para você testar os endpoints sem precisar criar nada manualmente.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">src/main/resources/</span><span class="file">data.sql</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="cm">-- data.sql — executado automaticamente ao iniciar a app
+--
+-- INSERT INTO = comando SQL para inserir um registro
+-- Sintaxe: INSERT INTO tabela (col1, col2) VALUES (val1, val2)
+-- O ID é gerado automaticamente — não precisamos informar.</span>
+
+<span class="cm">-- Inserindo 4 autores</span>
+<span class="kw">INSERT INTO</span> autores (nome, nacionalidade, data_nascimento) <span class="kw">VALUES</span>
+    (<span class="st">'Machado de Assis'</span>,       <span class="st">'Brasileiro'</span>, <span class="st">'1839-06-21'</span>),
+    (<span class="st">'Clarice Lispector'</span>,       <span class="st">'Brasileira'</span>, <span class="st">'1920-12-10'</span>),
+    (<span class="st">'José Saramago'</span>,           <span class="st">'Português'</span>,  <span class="st">'1922-11-16'</span>),
+    (<span class="st">'George Orwell'</span>,           <span class="st">'Britânico'</span>,  <span class="st">'1903-06-25'</span>);
+
+<span class="cm">-- Inserindo livros
+-- autor_id = ID do autor (1 = Machado, 2 = Clarice, etc.)
+-- Isso é uma CHAVE ESTRANGEIRA — relaciona livros com autores.</span>
+<span class="kw">INSERT INTO</span> livros (titulo, isbn, ano_publicacao, preco, estoque, autor_id) <span class="kw">VALUES</span>
+    (<span class="st">'Dom Casmurro'</span>,           <span class="st">'978-85-359-0277-5'</span>, <span class="nm">1899</span>, <span class="nm">29.90</span>, <span class="nm">15</span>, <span class="nm">1</span>),
+    (<span class="st">'Memórias Póstumas'</span>,      <span class="st">'978-85-359-0278-2'</span>, <span class="nm">1881</span>, <span class="nm">32.50</span>, <span class="nm">8</span>,  <span class="nm">1</span>),
+    (<span class="st">'A Hora da Estrela'</span>,      <span class="st">'978-85-359-0279-9'</span>, <span class="nm">1977</span>, <span class="nm">35.00</span>, <span class="nm">12</span>, <span class="nm">2</span>),
+    (<span class="st">'Ensaio sobre a Cegueira'</span>,<span class="st">'978-85-359-0282-9'</span>, <span class="nm">1995</span>, <span class="nm">39.90</span>, <span class="nm">18</span>, <span class="nm">3</span>),
+    (<span class="st">'1984'</span>,                    <span class="st">'978-0-452-28423-4'</span>, <span class="nm">1949</span>, <span class="nm">36.90</span>, <span class="nm">25</span>, <span class="nm">4</span>),
+    (<span class="st">'A Revolução dos Bichos'</span>, <span class="st">'978-0-451-52634-2'</span>, <span class="nm">1945</span>, <span class="nm">28.90</span>, <span class="nm">30</span>, <span class="nm">4</span>);</pre>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="section-title">📄 BibliotecaApplication.java — Ponto de entrada</div>
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — O método main()</div>
+      <p>Todo programa Java começa pelo método <code>main()</code>. O Spring Boot usa esse método para iniciar tudo: banco, servidor, controllers... Um único método, toda a aplicação sobe.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">com/projeto/biblioteca/</span><span class="file">BibliotecaApplication.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca;
+<span class="cm">// "package" = pasta lógica. Todo arquivo Java começa declarando
+// o pacote (pasta) onde ele mora. Isso evita conflitos de nomes.</span>
+
+<span class="kw">import</span> org.springframework.boot.SpringApplication;
+<span class="kw">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+<span class="cm">// "import" = importar classes de outros lugares para usar aqui</span>
+
+<span class="an">@SpringBootApplication</span>
+<span class="cm">// Esta anotação faz 3 coisas ao mesmo tempo:
+// 1. Diz que esta classe pode declarar configurações (beans)
+// 2. Ativa a auto-configuração do Spring (Spring decide tudo sozinho)
+// 3. Diz para o Spring varrer todos os subpacotes procurando
+//    classes anotadas com @Service, @Repository, @Controller...</span>
+<span class="kw">public class</span> <span class="tp">BibliotecaApplication</span> {
+
+  <span class="kw">public static void</span> <span class="mt">main</span>(<span class="tp">String</span>[] args) {
+    <span class="cm">// Este é o ponto de entrada do programa.
+    // SpringApplication.run() inicializa tudo:
+    //  - Conecta ao banco H2
+    //  - Cria as tabelas (via Hibernate)
+    //  - Executa data.sql
+    //  - Registra todos os endpoints HTTP
+    //  - Inicia o servidor Tomcat na porta 8080</span>
+    SpringApplication.<span class="mt">run</span>(<span class="tp">BibliotecaApplication</span>.<span class="kw">class</span>, args);
+    System.out.<span class="mt">println</span>(<span class="st">"✅ API rodando em: http://localhost:8080"</span>);
+    System.out.<span class="mt">println</span>(<span class="st">"🗄️  H2 Console:    http://localhost:8080/h2-console"</span>);
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done4">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(3)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(4)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(5)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 6 — MODEL
+════════════════════════════════════════════════════ -->
+<div class="step" id="s5">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#f3e8ff;">📋</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--purple)">Etapa 6 de 10 · Código</div>
+      <div class="card-title">Model — Entidades JPA</div>
+      <div class="card-sub">As classes Java que se tornam tabelas no banco de dados.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — O que é uma Entidade?</div>
+      <p>Uma <strong>entidade</strong> é uma classe Java que representa uma <strong>tabela no banco de dados</strong>. Você anota ela com <code>@Entity</code> e o Hibernate (por baixo do Spring) cria a tabela automaticamente.</p>
+      <p>Cada <strong>campo</strong> da classe = uma <strong>coluna</strong> na tabela.<br>
+      Cada <strong>objeto</strong> criado = uma <strong>linha</strong> na tabela.</p>
+      <p>O <strong>relacionamento</strong>: um Autor tem muitos Livros. No banco, isso vira uma coluna <code>autor_id</code> na tabela livros (chave estrangeira).</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Crie: model/Autor.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">model/</span><span class="file">Autor.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.model;
+
+<span class="kw">import</span> jakarta.persistence.*;
+<span class="kw">import</span> jakarta.validation.constraints.*;
+<span class="kw">import</span> lombok.*;
+<span class="kw">import</span> java.time.LocalDate;
+<span class="kw">import</span> java.util.ArrayList;
+<span class="kw">import</span> java.util.List;
+
+<span class="cm">// ─── ANOTAÇÕES LOMBOK ──────────────────────────────────────
+// Lombok gera código repetitivo para nós automaticamente.
+// Sem Lombok, para cada campo você escreveria:
+//   public String getNome() { return nome; }
+//   public void setNome(String nome) { this.nome = nome; }
+// Com Lombok, só coloca @Getter @Setter e ele faz isso!</span>
+
+<span class="an">@Getter</span>          <span class="cm">// Gera: getNome(), getNacionalidade(), getId()...</span>
+<span class="an">@Setter</span>          <span class="cm">// Gera: setNome(), setNacionalidade()...</span>
+<span class="an">@Builder</span>         <span class="cm">// Permite: Autor.builder().nome("x").build()</span>
+<span class="an">@NoArgsConstructor</span>  <span class="cm">// Gera: new Autor() — construtor sem argumentos</span>
+<span class="an">@AllArgsConstructor</span> <span class="cm">// Gera: new Autor(id, nome, ...) — com todos os campos</span>
+<span class="an">@ToString</span>           <span class="cm">// Gera: toString() para imprimir o objeto</span>
+
+<span class="cm">// ─── ANOTAÇÕES JPA ────────────────────────────────────────</span>
+<span class="an">@Entity</span>
+<span class="cm">// @Entity = esta classe é uma tabela no banco de dados.
+// O Hibernate vai criar: CREATE TABLE autores (...)</span>
+
+<span class="an">@Table</span>(name = <span class="st">"autores"</span>)
+<span class="cm">// @Table = define o nome da tabela no banco.
+// Sem isso, o nome seria "Autor" (nome da classe).</span>
+
+<span class="kw">public class</span> <span class="tp">Autor</span> {
+
+  <span class="cm">// ─── CHAVE PRIMÁRIA ───────────────────────────────────────
+  // Todo registro num banco precisa de um identificador único.
+  // O banco vai gerar automaticamente: 1, 2, 3, 4...</span>
+
+  <span class="an">@Id</span>
+  <span class="cm">// @Id = este campo é a chave primária (Primary Key).
+  // No banco: coluna "id" com tipo BIGINT PRIMARY KEY.</span>
+
+  <span class="an">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+  <span class="cm">// @GeneratedValue = o banco gera o valor automaticamente.
+  // IDENTITY = auto-incremento: 1, 2, 3, 4...
+  // Você nunca precisa informar o ID ao criar um autor.</span>
+
+  <span class="kw">private</span> <span class="tp">Long</span> id;
+  <span class="cm">// Long = número inteiro longo (pode chegar em bilhões).
+  // Perfeito para IDs.</span>
+
+  <span class="cm">// ─── CAMPOS DA TABELA ─────────────────────────────────────
+  // Cada campo aqui = uma coluna na tabela "autores"</span>
+
+  <span class="an">@NotBlank</span>(message = <span class="st">"Nome é obrigatório"</span>)
+  <span class="cm">// @NotBlank = validação: o campo não pode ser:
+  //   - null (sem valor)
+  //   - "" (string vazia)
+  //   - "   " (só espaços)
+  // A mensagem aparece quando a validação falha.</span>
+
+  <span class="an">@Size</span>(min = <span class="nm">2</span>, max = <span class="nm">100</span>, message = <span class="st">"Nome: 2 a 100 caracteres"</span>)
+  <span class="cm">// @Size = tamanho mínimo e máximo da string</span>
+
+  <span class="an">@Column</span>(name = <span class="st">"nome"</span>, nullable = <span class="kw">false</span>, length = <span class="nm">100</span>)
+  <span class="cm">// @Column = define como a coluna aparece no banco:
+  //   name = "nome"   → nome da coluna no banco
+  //   nullable = false → NOT NULL no SQL (obrigatório)
+  //   length = 100    → VARCHAR(100)</span>
+
+  <span class="kw">private</span> <span class="tp">String</span> nome;
+
+  <span class="an">@NotBlank</span>(message = <span class="st">"Nacionalidade é obrigatória"</span>)
+  <span class="an">@Column</span>(name = <span class="st">"nacionalidade"</span>, nullable = <span class="kw">false</span>, length = <span class="nm">50</span>)
+  <span class="kw">private</span> <span class="tp">String</span> nacionalidade;
+
+  <span class="an">@Column</span>(name = <span class="st">"data_nascimento"</span>)
+  <span class="cm">// LocalDate = representa apenas uma data (sem hora): ex: 1839-06-21
+  // Sem @NotNull aqui: data de nascimento é opcional</span>
+  <span class="kw">private</span> <span class="tp">LocalDate</span> dataNascimento;
+
+  <span class="cm">// ─── RELACIONAMENTO 1:N ───────────────────────────────────
+  //
+  // Um Autor tem MUITOS Livros → @OneToMany
+  // Um Livro tem UM Autor    → @ManyToOne (na classe Livro)
+  //
+  // mappedBy = "autor"
+  //   → diz que a classe Livro é "dona" do relacionamento
+  //   → o campo "autor" dentro de Livro tem a chave estrangeira
+  //
+  // cascade = CascadeType.ALL
+  //   → ao deletar um autor, seus livros também são deletados
+  //
+  // fetch = FetchType.LAZY
+  //   → os livros SÓ são carregados do banco quando pedirmos
+  //   → economiza memória: não carrega livros desnecessariamente
+  //
+  // @ToString.Exclude
+  //   → sem isso, toString() de Autor chamaria toString() de Livro
+  //   que chamaria toString() de Autor... loop infinito! 💥</span>
+
+  <span class="an">@OneToMany</span>(mappedBy = <span class="st">"autor"</span>, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  <span class="an">@ToString.Exclude</span>
+  <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">Livro</span>&gt; livros = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;&gt;();
+  <span class="cm">// List<Livro> = lista de livros deste autor
+  // Inicializamos como ArrayList vazio para não dar NullPointerException</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="section-title">📄 Crie: model/Livro.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">model/</span><span class="file">Livro.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.model;
+
+<span class="kw">import</span> jakarta.persistence.*;
+<span class="kw">import</span> jakarta.validation.constraints.*;
+<span class="kw">import</span> lombok.*;
+<span class="kw">import</span> java.math.BigDecimal;
+
+<span class="an">@Getter</span> <span class="an">@Setter</span> <span class="an">@Builder</span> <span class="an">@ToString</span>
+<span class="an">@NoArgsConstructor</span> <span class="an">@AllArgsConstructor</span>
+<span class="an">@Entity</span>
+<span class="an">@Table</span>(name = <span class="st">"livros"</span>)
+<span class="kw">public class</span> <span class="tp">Livro</span> {
+
+  <span class="an">@Id</span>
+  <span class="an">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+  <span class="kw">private</span> <span class="tp">Long</span> id;
+
+  <span class="an">@NotBlank</span>(message = <span class="st">"Título é obrigatório"</span>)
+  <span class="an">@Size</span>(min = <span class="nm">1</span>, max = <span class="nm">200</span>)
+  <span class="an">@Column</span>(name = <span class="st">"titulo"</span>, nullable = <span class="kw">false</span>)
+  <span class="kw">private</span> <span class="tp">String</span> titulo;
+
+  <span class="cm">// ISBN = International Standard Book Number
+  // Código único mundial que identifica um livro.
+  // unique = true → o banco não permite dois livros com o mesmo ISBN</span>
+  <span class="an">@NotBlank</span>(message = <span class="st">"ISBN é obrigatório"</span>)
+  <span class="an">@Column</span>(name = <span class="st">"isbn"</span>, nullable = <span class="kw">false</span>, unique = <span class="kw">true</span>)
+  <span class="kw">private</span> <span class="tp">String</span> isbn;
+
+  <span class="an">@NotNull</span>(message = <span class="st">"Ano de publicação é obrigatório"</span>)
+  <span class="cm">// @NotNull = campo não pode ser null (para tipos não-String, use @NotNull)
+  // @NotBlank é só para String. Para Integer, Long, BigDecimal → @NotNull</span>
+  <span class="an">@Min</span>(value = <span class="nm">1000</span>, message = <span class="st">"Ano inválido"</span>)
+  <span class="an">@Max</span>(value = <span class="nm">2100</span>, message = <span class="st">"Ano inválido"</span>)
+  <span class="an">@Column</span>(name = <span class="st">"ano_publicacao"</span>, nullable = <span class="kw">false</span>)
+  <span class="kw">private</span> <span class="tp">Integer</span> anoPublicacao;
+
+  <span class="cm">// BigDecimal para valores monetários!
+  // Por quê não double ou float?
+  // double: 0.1 + 0.2 = 0.30000000000000004 (erro de ponto flutuante)
+  // BigDecimal: 0.1 + 0.2 = 0.3 (preciso, sem erros de centavos)</span>
+  <span class="an">@NotNull</span>(message = <span class="st">"Preço é obrigatório"</span>)
+  <span class="an">@DecimalMin</span>(value = <span class="st">"0.01"</span>, message = <span class="st">"Preço deve ser positivo"</span>)
+  <span class="an">@Column</span>(name = <span class="st">"preco"</span>, nullable = <span class="kw">false</span>, precision = <span class="nm">10</span>, scale = <span class="nm">2</span>)
+  <span class="cm">// precision=10 = máx 10 dígitos no total
+  // scale=2      = 2 dígitos após a vírgula (centavos)</span>
+  <span class="kw">private</span> <span class="tp">BigDecimal</span> preco;
+
+  <span class="an">@NotNull</span>(message = <span class="st">"Estoque é obrigatório"</span>)
+  <span class="an">@Min</span>(value = <span class="nm">0</span>, message = <span class="st">"Estoque não pode ser negativo"</span>)
+  <span class="an">@Column</span>(name = <span class="st">"estoque"</span>, nullable = <span class="kw">false</span>)
+  <span class="kw">private</span> <span class="tp">Integer</span> estoque;
+
+  <span class="cm">// ─── RELACIONAMENTO N:1 ───────────────────────────────────
+  //
+  // @ManyToOne = Muitos Livros → Um Autor
+  // Este é o lado "dono" do relacionamento.
+  // Aqui fica a coluna "autor_id" no banco (chave estrangeira).
+  //
+  // FetchType.EAGER = carrega o autor junto com o livro.
+  // Quando buscar um Livro, o Autor já vem junto automaticamente.
+  //
+  // @JoinColumn(name = "autor_id")
+  //   → define o nome da coluna de chave estrangeira no banco
+  //   → Banco cria: autor_id BIGINT REFERENCES autores(id)</span>
+  <span class="an">@ManyToOne</span>(fetch = FetchType.EAGER)
+  <span class="an">@JoinColumn</span>(name = <span class="st">"autor_id"</span>, nullable = <span class="kw">false</span>)
+  <span class="an">@NotNull</span>(message = <span class="st">"Autor é obrigatório"</span>)
+  <span class="an">@ToString.Exclude</span>
+  <span class="kw">private</span> <span class="tp">Autor</span> autor;
+}</pre>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done5">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(4)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(5)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(6)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 7 — REPOSITORY
+════════════════════════════════════════════════════ -->
+<div class="step" id="s6">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#dbeafe;">🗂️</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--blue)">Etapa 7 de 10 · Código</div>
+      <div class="card-title">Repository — Acesso ao Banco</div>
+      <div class="card-sub">O Spring gera o SQL automaticamente a partir do nome dos métodos.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — Repository Pattern</div>
+      <p>O <strong>Repository</strong> é a camada que fala com o banco de dados. Ao criar uma interface que estende <code>JpaRepository&lt;Autor, Long&gt;</code>, o Spring <strong>cria automaticamente a implementação</strong> com dezenas de métodos prontos. Você não precisa escrever nenhuma query SQL para as operações básicas.</p>
+      <p><strong>O que você ganha de graça:</strong> <code>save()</code> (INSERT/UPDATE), <code>findById()</code> (SELECT), <code>findAll()</code> (SELECT *), <code>deleteById()</code> (DELETE), <code>count()</code>, <code>existsById()</code>...</p>
+      <p><strong>Query Method</strong>: Para buscas customizadas, o Spring lê o <em>nome do método</em> e gera o SQL. <code>findByNomeContainingIgnoreCase("machado")</code> → <code>WHERE LOWER(nome) LIKE '%machado%'</code>. Automático!</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Crie: repository/AutorRepository.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">repository/</span><span class="file">AutorRepository.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.repository;
+
+<span class="kw">import</span> com.projeto.biblioteca.model.Autor;
+<span class="kw">import</span> org.springframework.data.jpa.repository.JpaRepository;
+<span class="kw">import</span> org.springframework.stereotype.Repository;
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.Optional;
+
+<span class="an">@Repository</span>
+<span class="cm">// @Repository marca esta interface como componente de acesso a dados.
+// O Spring detecta, cria uma implementação real em tempo de execução
+// e a disponibiliza para injeção onde for necessário.
+// Você define a interface → Spring escreve o código. Mágico! ✨</span>
+
+<span class="kw">public interface</span> <span class="tp">AutorRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;<span class="tp">Autor</span>, <span class="tp">Long</span>&gt; {
+  <span class="cm">// JpaRepository<Autor, Long>:
+  //   Autor = tipo da entidade (qual tabela gerenciar)
+  //   Long  = tipo da chave primária (tipo do campo "id")</span>
+
+  <span class="cm">// ─── QUERY METHODS (Spring gera o SQL pelo nome) ──────────
+
+  // findByNomeContainingIgnoreCase("machado")
+  // → SELECT * FROM autores WHERE LOWER(nome) LIKE '%machado%'
+  // Containing = LIKE '%?%' | IgnoreCase = não diferencia maiúsculas</span>
+  <span class="tp">List</span>&lt;<span class="tp">Autor</span>&gt; <span class="mt">findByNomeContainingIgnoreCase</span>(<span class="tp">String</span> nome);
+
+  <span class="cm">// findByNacionalidade("Brasileiro")
+  // → SELECT * FROM autores WHERE nacionalidade = 'Brasileiro'</span>
+  <span class="tp">List</span>&lt;<span class="tp">Autor</span>&gt; <span class="mt">findByNacionalidade</span>(<span class="tp">String</span> nacionalidade);
+
+  <span class="cm">// Optional<Autor> = pode retornar um Autor OU nada.
+  // Evita NullPointerException: você verifica antes de usar.
+  // findByNomeIgnoreCase = WHERE LOWER(nome) = LOWER(?)</span>
+  <span class="tp">Optional</span>&lt;<span class="tp">Autor</span>&gt; <span class="mt">findByNomeIgnoreCase</span>(<span class="tp">String</span> nome);
+}</pre>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="section-title">📄 Crie: repository/LivroRepository.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">repository/</span><span class="file">LivroRepository.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.repository;
+
+<span class="kw">import</span> com.projeto.biblioteca.model.Livro;
+<span class="kw">import</span> org.springframework.data.jpa.repository.JpaRepository;
+<span class="kw">import</span> org.springframework.data.jpa.repository.Query;
+<span class="kw">import</span> org.springframework.stereotype.Repository;
+<span class="kw">import</span> java.math.BigDecimal;
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.Optional;
+
+<span class="an">@Repository</span>
+<span class="kw">public interface</span> <span class="tp">LivroRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;<span class="tp">Livro</span>, <span class="tp">Long</span>&gt; {
+
+  <span class="cm">// findByIsbn("978-...") → SELECT * FROM livros WHERE isbn = '978-...'
+  // Optional porque pode não encontrar nenhum livro com aquele ISBN.</span>
+  <span class="tp">Optional</span>&lt;<span class="tp">Livro</span>&gt; <span class="mt">findByIsbn</span>(<span class="tp">String</span> isbn);
+
+  <span class="cm">// findByTituloContainingIgnoreCase("dom")
+  // → WHERE LOWER(titulo) LIKE '%dom%'</span>
+  <span class="tp">List</span>&lt;<span class="tp">Livro</span>&gt; <span class="mt">findByTituloContainingIgnoreCase</span>(<span class="tp">String</span> titulo);
+
+  <span class="cm">// findByAutor_Id(1L)
+  // O "_" é o separador: "Autor" (entidade relacionada) + "Id" (campo)
+  // Spring faz o JOIN automaticamente:
+  // → SELECT l.* FROM livros l WHERE l.autor_id = 1</span>
+  <span class="tp">List</span>&lt;<span class="tp">Livro</span>&gt; <span class="mt">findByAutor_Id</span>(<span class="tp">Long</span> autorId);
+
+  <span class="cm">// findByPrecoBetween(20.00, 40.00)
+  // → WHERE preco BETWEEN 20.00 AND 40.00</span>
+  <span class="tp">List</span>&lt;<span class="tp">Livro</span>&gt; <span class="mt">findByPrecoBetween</span>(<span class="tp">BigDecimal</span> min, <span class="tp">BigDecimal</span> max);
+
+  <span class="cm">// OrderByTituloAsc → ORDER BY titulo ASC (A, B, C...)</span>
+  <span class="tp">List</span>&lt;<span class="tp">Livro</span>&gt; <span class="mt">findAllByOrderByTituloAsc</span>();
+
+  <span class="cm">// Busca manual com JPQL (Java Persistence Query Language)
+  // Parece SQL, mas usa nomes das CLASSES e CAMPOS Java, não banco.
+  // l.estoque (campo Java) = "estoque" (coluna no banco)</span>
+  <span class="an">@Query</span>(<span class="st">"SELECT l FROM Livro l WHERE l.estoque > 0 ORDER BY l.titulo ASC"</span>)
+  <span class="tp">List</span>&lt;<span class="tp">Livro</span>&gt; <span class="mt">findLivrosDisponiveis</span>();
+
+  <span class="cm">// existsBy... retorna boolean (true/false)
+  // Útil para checar se já existe sem buscar o objeto inteiro</span>
+  <span class="kw">boolean</span> <span class="mt">existsByIsbn</span>(<span class="tp">String</span> isbn);
+
+  <span class="cm">// existsByIsbnAndIdNot = ISBN existe E id diferente do informado
+  // → Usado na atualização: se outro livro já tem o mesmo ISBN, conflito!</span>
+  <span class="kw">boolean</span> <span class="mt">existsByIsbnAndIdNot</span>(<span class="tp">String</span> isbn, <span class="tp">Long</span> id);
+}</pre>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done6">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(5)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(6)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(7)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 8 — SERVICE + DTOs + EXCEPTIONS
+════════════════════════════════════════════════════ -->
+<div class="step" id="s7">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#fef9c3;">⚙️</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--amber)">Etapa 8 de 10 · Código</div>
+      <div class="card-title">DTOs, Exceções e Services</div>
+      <div class="card-sub">Objetos de transferência, erros customizados e regras de negócio.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — DTO, Service e Exceções</div>
+      <p><strong>DTO</strong> (Data Transfer Object): define exatamente o que entra e o que sai da API. Separa o que o banco guarda do que o cliente recebe — mais seguro e flexível.</p>
+      <p><strong>Service</strong>: contém as regras de negócio. Ex: "não pode criar dois autores com o mesmo nome". Ele converte DTO ↔ Entity, chama o Repository e gerencia transações.</p>
+      <p><strong>Exceções customizadas</strong>: quando algo dá errado (ID não encontrado, ISBN duplicado), lançamos exceções próprias. O GlobalExceptionHandler as captura e retorna JSON limpo com o status HTTP correto.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Crie: dto/AutorDTO.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">dto/</span><span class="file">AutorDTO.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.dto;
+
+<span class="kw">import</span> com.fasterxml.jackson.annotation.JsonFormat;
+<span class="kw">import</span> jakarta.validation.constraints.*;
+<span class="kw">import</span> java.time.LocalDate;
+
+<span class="cm">// DTOs usando "record" do Java 16+
+// Um record é uma classe imutável que automaticamente gera:
+// construtor, getters, equals(), hashCode() e toString().
+// É perfeito para DTOs porque eles só transportam dados.</span>
+
+<span class="kw">public class</span> <span class="tp">AutorDTO</span> {
+
+  <span class="cm">// ── O que o CLIENTE ENVIA para nós (POST e PUT) ──────────</span>
+  <span class="kw">public record</span> <span class="tp">AutorRequestDTO</span>(
+
+    <span class="an">@NotBlank</span>(message = <span class="st">"Nome é obrigatório"</span>)
+    <span class="an">@Size</span>(min = <span class="nm">2</span>, max = <span class="nm">100</span>, message = <span class="st">"Nome: 2 a 100 caracteres"</span>)
+    <span class="tp">String</span> nome,
+
+    <span class="an">@NotBlank</span>(message = <span class="st">"Nacionalidade é obrigatória"</span>)
+    <span class="tp">String</span> nacionalidade,
+
+    <span class="an">@JsonFormat</span>(pattern = <span class="st">"yyyy-MM-dd"</span>)
+    <span class="cm">// Define o formato da data no JSON: "1839-06-21"
+    // Sem isso, o Jackson não saberia como converter a string para LocalDate</span>
+    <span class="tp">LocalDate</span> dataNascimento
+
+  ) {}
+
+  <span class="cm">// ── O que NÓS ENVIAMOS para o cliente (GET) ───────────────</span>
+  <span class="kw">public record</span> <span class="tp">AutorResponseDTO</span>(
+    <span class="tp">Long</span> id,
+    <span class="tp">String</span> nome,
+    <span class="tp">String</span> nacionalidade,
+    <span class="an">@JsonFormat</span>(pattern = <span class="st">"yyyy-MM-dd"</span>) <span class="tp">LocalDate</span> dataNascimento,
+    <span class="tp">Integer</span> quantidadeLivros <span class="cm">// não existe no banco, calculamos no Service</span>
+  ) {}
+
+  <span class="cm">// ── Versão resumida (usada dentro de LivroResponseDTO) ────
+  // Não faz sentido retornar todos os livros do autor
+  // dentro de cada livro. Usamos só o resumo.</span>
+  <span class="kw">public record</span> <span class="tp">AutorResumoDTO</span>(
+    <span class="tp">Long</span> id, <span class="tp">String</span> nome, <span class="tp">String</span> nacionalidade
+  ) {}
+}</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Crie: dto/LivroDTO.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">dto/</span><span class="file">LivroDTO.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.dto;
+
+<span class="kw">import</span> jakarta.validation.constraints.*;
+<span class="kw">import</span> java.math.BigDecimal;
+
+<span class="kw">public class</span> <span class="tp">LivroDTO</span> {
+
+  <span class="kw">public record</span> <span class="tp">LivroRequestDTO</span>(
+    <span class="an">@NotBlank</span>(message = <span class="st">"Título é obrigatório"</span>) <span class="tp">String</span> titulo,
+    <span class="an">@NotBlank</span>(message = <span class="st">"ISBN é obrigatório"</span>) <span class="tp">String</span> isbn,
+    <span class="an">@NotNull</span> <span class="an">@Min</span>(<span class="nm">1000</span>) <span class="an">@Max</span>(<span class="nm">2100</span>) <span class="tp">Integer</span> anoPublicacao,
+    <span class="an">@NotNull</span> <span class="an">@DecimalMin</span>(<span class="st">"0.01"</span>) <span class="tp">BigDecimal</span> preco,
+    <span class="an">@NotNull</span> <span class="an">@Min</span>(<span class="nm">0</span>) <span class="tp">Integer</span> estoque,
+    <span class="an">@NotNull</span>(message = <span class="st">"ID do autor é obrigatório"</span>) <span class="tp">Long</span> autorId
+    <span class="cm">// Recebemos o ID do autor — o Service vai buscar o Autor pelo ID</span>
+  ) {}
+
+  <span class="kw">public record</span> <span class="tp">LivroResponseDTO</span>(
+    <span class="tp">Long</span> id, <span class="tp">String</span> titulo, <span class="tp">String</span> isbn,
+    <span class="tp">Integer</span> anoPublicacao, <span class="tp">BigDecimal</span> preco, <span class="tp">Integer</span> estoque,
+    <span class="tp">AutorDTO</span>.<span class="tp">AutorResumoDTO</span> autor <span class="cm">// DTO aninhado — evita loop infinito!</span>
+  ) {}
+
+  <span class="kw">public record</span> <span class="tp">AtualizarEstoqueDTO</span>(
+    <span class="an">@NotNull</span> <span class="an">@Min</span>(<span class="nm">0</span>) <span class="tp">Integer</span> estoque
+  ) {}
+}</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Crie as 3 classes de exceção</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">exception/</span><span class="file">ResourceNotFoundException.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.exception;
+
+<span class="cm">// Lançada quando um recurso não é encontrado → HTTP 404 Not Found
+// Estende RuntimeException: não precisa ser declarada com "throws"</span>
+<span class="kw">public class</span> <span class="tp">ResourceNotFoundException</span> <span class="kw">extends</span> <span class="tp">RuntimeException</span> {
+  <span class="kw">public</span> <span class="mt">ResourceNotFoundException</span>(<span class="tp">String</span> recurso, <span class="tp">String</span> campo, <span class="tp">Object</span> valor) {
+    <span class="cm">// super() = chama o construtor do pai (RuntimeException) com a mensagem
+    // String.format = monta a mensagem: "Autor com id '99' não encontrado"</span>
+    <span class="kw">super</span>(String.<span class="mt">format</span>(<span class="st">"%s com %s '%s' não encontrado"</span>, recurso, campo, valor));
+  }
+}</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">exception/</span><span class="file">BusinessException.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.exception;
+
+<span class="cm">// Lançada quando uma regra de negócio é violada → HTTP 409 Conflict
+// Ex: tentar criar um autor com nome que já existe</span>
+<span class="kw">public class</span> <span class="tp">BusinessException</span> <span class="kw">extends</span> <span class="tp">RuntimeException</span> {
+  <span class="kw">public</span> <span class="mt">BusinessException</span>(<span class="tp">String</span> message) {
+    <span class="kw">super</span>(message);
+  }
+}</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">exception/</span><span class="file">GlobalExceptionHandler.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.exception;
+
+<span class="kw">import</span> org.springframework.http.*;
+<span class="kw">import</span> org.springframework.validation.FieldError;
+<span class="kw">import</span> org.springframework.web.bind.MethodArgumentNotValidException;
+<span class="kw">import</span> org.springframework.web.bind.annotation.*;
+<span class="kw">import</span> java.time.LocalDateTime;
+<span class="kw">import</span> java.util.*;
+
+<span class="an">@ControllerAdvice</span>
+<span class="cm">// @ControllerAdvice = esta classe é um "interceptador" global.
+// Ela captura exceções lançadas em QUALQUER controller da app.
+// Sem isso, quando um erro ocorre, o Spring retornaria uma
+// página de erro feia com stack trace técnico para o cliente.</span>
+<span class="kw">public class</span> <span class="tp">GlobalExceptionHandler</span> {
+
+  <span class="cm">// Record que representa a resposta de erro — JSON padronizado</span>
+  <span class="kw">record</span> <span class="tp">ErroResponse</span>(<span class="kw">int</span> status, <span class="tp">String</span> mensagem, <span class="tp">LocalDateTime</span> timestamp) {}
+
+  <span class="an">@ExceptionHandler</span>(<span class="tp">ResourceNotFoundException</span>.<span class="kw">class</span>)
+  <span class="cm">// @ExceptionHandler = quando ResourceNotFoundException for lançada,
+  // este método é chamado. Retorna HTTP 404 com JSON de erro.</span>
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">ErroResponse</span>&gt; <span class="mt">handle404</span>(<span class="tp">ResourceNotFoundException</span> ex) {
+    <span class="kw">return</span> ResponseEntity
+      .<span class="mt">status</span>(HttpStatus.NOT_FOUND) <span class="cm">// HTTP 404</span>
+      .<span class="mt">body</span>(<span class="kw">new</span> <span class="tp">ErroResponse</span>(<span class="nm">404</span>, ex.<span class="mt">getMessage</span>(), LocalDateTime.<span class="mt">now</span>()));
+  }
+
+  <span class="an">@ExceptionHandler</span>(<span class="tp">BusinessException</span>.<span class="kw">class</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">ErroResponse</span>&gt; <span class="mt">handle409</span>(<span class="tp">BusinessException</span> ex) {
+    <span class="kw">return</span> ResponseEntity
+      .<span class="mt">status</span>(HttpStatus.CONFLICT) <span class="cm">// HTTP 409</span>
+      .<span class="mt">body</span>(<span class="kw">new</span> <span class="tp">ErroResponse</span>(<span class="nm">409</span>, ex.<span class="mt">getMessage</span>(), LocalDateTime.<span class="mt">now</span>()));
+  }
+
+  <span class="an">@ExceptionHandler</span>(<span class="tp">MethodArgumentNotValidException</span>.<span class="kw">class</span>)
+  <span class="cm">// Captura erros do @Valid — quando os dados enviados não passam
+  // nas validações (@NotBlank, @Size, @Min, etc.)</span>
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">Map</span>&lt;<span class="tp">String</span>, <span class="tp">Object</span>&gt;&gt; <span class="mt">handle400</span>(<span class="tp">MethodArgumentNotValidException</span> ex) {
+    <span class="tp">Map</span>&lt;<span class="tp">String</span>, <span class="tp">String</span>&gt; campos = <span class="kw">new</span> <span class="tp">HashMap</span>&lt;&gt;();
+    <span class="kw">for</span> (<span class="tp">FieldError</span> e : ex.<span class="mt">getBindingResult</span>().<span class="mt">getFieldErrors</span>())
+      campos.<span class="mt">put</span>(e.<span class="mt">getField</span>(), e.<span class="mt">getDefaultMessage</span>());
+      <span class="cm">// Coleta todos os campos com erro: {"nome":"Nome é obrigatório"}</span>
+    <span class="kw">return</span> ResponseEntity.<span class="mt">badRequest</span>() <span class="cm">// HTTP 400</span>
+      .<span class="mt">body</span>(<span class="tp">Map</span>.<span class="mt">of</span>(<span class="st">"status"</span>, <span class="nm">400</span>, <span class="st">"campos"</span>, campos, <span class="st">"timestamp"</span>, LocalDateTime.<span class="mt">now</span>()));
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Crie: service/AutorService.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">service/</span><span class="file">AutorService.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.service;
+
+<span class="kw">import</span> com.projeto.biblioteca.dto.AutorDTO;
+<span class="kw">import</span> com.projeto.biblioteca.dto.AutorDTO.*;
+<span class="kw">import</span> com.projeto.biblioteca.exception.BusinessException;
+<span class="kw">import</span> com.projeto.biblioteca.exception.ResourceNotFoundException;
+<span class="kw">import</span> com.projeto.biblioteca.model.Autor;
+<span class="kw">import</span> com.projeto.biblioteca.repository.AutorRepository;
+<span class="kw">import</span> org.springframework.stereotype.Service;
+<span class="kw">import</span> org.springframework.transaction.annotation.Transactional;
+<span class="kw">import</span> java.util.List;
+
+<span class="an">@Service</span>
+<span class="cm">// @Service = marca esta classe como componente de serviço.
+// O Spring a detecta, cria uma instância e a injeta onde for necessária.
+// É equivalente a @Component, mas semanticamente mais claro.</span>
+<span class="kw">public class</span> <span class="tp">AutorService</span> {
+
+  <span class="cm">// ─── INJEÇÃO DE DEPENDÊNCIA POR CONSTRUTOR ────────────────
+  //
+  // "Injeção de Dependência" = o Spring nos entrega o AutorRepository
+  // em vez de criarmos com "new AutorRepository()".
+  //
+  // Por que usar construtor em vez de @Autowired no campo?
+  //   ✅ Melhor para testes (podemos passar um mock)
+  //   ✅ O campo pode ser "final" (imutável após criação)
+  //   ✅ Forma recomendada atualmente pelo Spring</span>
+  <span class="kw">private final</span> <span class="tp">AutorRepository</span> autorRepository;
+
+  <span class="kw">public</span> <span class="mt">AutorService</span>(<span class="tp">AutorRepository</span> autorRepository) {
+    <span class="kw">this</span>.autorRepository = autorRepository;
+    <span class="cm">// "this.autorRepository" = campo da classe
+    // "autorRepository"      = parâmetro do construtor</span>
+  }
+
+  <span class="cm">// ══════════════════════════════════════════════════════════
+  //  C — CREATE (criar)
+  // ══════════════════════════════════════════════════════════</span>
+  <span class="an">@Transactional</span>
+  <span class="cm">// @Transactional = tudo dentro deste método acontece em uma transação.
+  // Se qualquer linha lançar exceção, o banco faz ROLLBACK (desfaz tudo).
+  // Se tudo der certo, faz COMMIT (confirma as mudanças).</span>
+  <span class="kw">public</span> <span class="tp">AutorResponseDTO</span> <span class="mt">criar</span>(<span class="tp">AutorRequestDTO</span> dto) {
+
+    <span class="cm">// REGRA DE NEGÓCIO: nome deve ser único
+    // findByNomeIgnoreCase retorna Optional<Autor>
+    // ifPresent = executa o código se o Optional não estiver vazio</span>
+    autorRepository.<span class="mt">findByNomeIgnoreCase</span>(dto.nome()).<span class="mt">ifPresent</span>(existente -> {
+      <span class="kw">throw new</span> <span class="tp">BusinessException</span>(<span class="st">"Já existe um autor com o nome: "</span> + dto.nome());
+    });
+
+    Autor autor = <span class="mt">paraEntidade</span>(dto);            <span class="cm">// DTO → Entity</span>
+    Autor salvo = autorRepository.<span class="mt">save</span>(autor);  <span class="cm">// INSERT no banco</span>
+    <span class="kw">return</span> <span class="mt">paraResponseDTO</span>(salvo);             <span class="cm">// Entity → DTO de resposta</span>
+  }
+
+  <span class="cm">// ══════════════════════════════════════════════════════════
+  //  R — READ (ler)
+  // ══════════════════════════════════════════════════════════</span>
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="cm">// readOnly = true → otimização para leitura:
+  // O Hibernate não rastreia mudanças nos objetos (mais performance)</span>
+  <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">AutorResponseDTO</span>&gt; <span class="mt">listarTodos</span>() {
+    <span class="kw">return</span> autorRepository.<span class="mt">findAll</span>()    <span class="cm">// SELECT * FROM autores</span>
+      .stream()                          <span class="cm">// transforma a List em Stream (processamento)</span>
+      .<span class="mt">map</span>(<span class="kw">this</span>::paraResponseDTO)        <span class="cm">// converte cada Autor → AutorResponseDTO</span>
+      .<span class="mt">toList</span>();                          <span class="cm">// junta de volta em List</span>
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">AutorResponseDTO</span> <span class="mt">buscarPorId</span>(<span class="tp">Long</span> id) {
+    Autor autor = autorRepository.<span class="mt">findById</span>(id)
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Autor"</span>, <span class="st">"id"</span>, id));
+      <span class="cm">// orElseThrow = retorna o Autor SE encontrado, OU lança a exceção.
+      // A exceção é capturada pelo GlobalExceptionHandler → retorna 404.</span>
+    <span class="kw">return</span> <span class="mt">paraResponseDTO</span>(autor);
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">AutorResponseDTO</span>&gt; <span class="mt">buscarPorNome</span>(<span class="tp">String</span> nome) {
+    <span class="kw">return</span> autorRepository.<span class="mt">findByNomeContainingIgnoreCase</span>(nome)
+      .stream().<span class="mt">map</span>(<span class="kw">this</span>::paraResponseDTO).<span class="mt">toList</span>();
+  }
+
+  <span class="cm">// ══════════════════════════════════════════════════════════
+  //  U — UPDATE (atualizar)
+  // ══════════════════════════════════════════════════════════</span>
+  <span class="an">@Transactional</span>
+  <span class="kw">public</span> <span class="tp">AutorResponseDTO</span> <span class="mt">atualizar</span>(<span class="tp">Long</span> id, <span class="tp">AutorRequestDTO</span> dto) {
+    Autor autor = autorRepository.<span class="mt">findById</span>(id)
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Autor"</span>, <span class="st">"id"</span>, id));
+
+    <span class="cm">// Alteramos os campos do objeto existente.
+    // NÃO criamos um novo Autor — se criássemos, o save() faria INSERT
+    // em vez de UPDATE. Como o objeto "autor" tem ID, faz UPDATE.</span>
+    autor.<span class="mt">setNome</span>(dto.nome());
+    autor.<span class="mt">setNacionalidade</span>(dto.nacionalidade());
+    autor.<span class="mt">setDataNascimento</span>(dto.dataNascimento());
+
+    <span class="kw">return</span> <span class="mt">paraResponseDTO</span>(autorRepository.<span class="mt">save</span>(autor)); <span class="cm">// UPDATE</span>
+  }
+
+  <span class="cm">// ══════════════════════════════════════════════════════════
+  //  D — DELETE (deletar)
+  // ══════════════════════════════════════════════════════════</span>
+  <span class="an">@Transactional</span>
+  <span class="kw">public void</span> <span class="mt">deletar</span>(<span class="tp">Long</span> id) {
+    Autor autor = autorRepository.<span class="mt">findById</span>(id)
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Autor"</span>, <span class="st">"id"</span>, id));
+
+    <span class="cm">// REGRA: não deletar autor que tem livros cadastrados</span>
+    <span class="kw">if</span> (!autor.<span class="mt">getLivros</span>().isEmpty()) {
+      <span class="kw">throw new</span> <span class="tp">BusinessException</span>(
+        <span class="st">"Não é possível deletar o autor pois ele possui "</span> +
+        autor.<span class="mt">getLivros</span>().size() + <span class="st">" livro(s). Delete os livros primeiro."</span>
+      );
+    }
+    autorRepository.<span class="mt">delete</span>(autor); <span class="cm">// DELETE FROM autores WHERE id = ?</span>
+  }
+
+  <span class="cm">// ─── MÉTODOS PRIVADOS DE CONVERSÃO ────────────────────────</span>
+
+  <span class="cm">// DTO de entrada → Entidade JPA</span>
+  <span class="kw">private</span> <span class="tp">Autor</span> <span class="mt">paraEntidade</span>(<span class="tp">AutorRequestDTO</span> dto) {
+    <span class="kw">return</span> Autor.builder()        <span class="cm">// inicia o Builder (Lombok)</span>
+      .<span class="mt">nome</span>(dto.nome())           <span class="cm">// dto.nome() = getter do record</span>
+      .<span class="mt">nacionalidade</span>(dto.nacionalidade())
+      .<span class="mt">dataNascimento</span>(dto.dataNascimento())
+      .<span class="mt">build</span>();                  <span class="cm">// cria o objeto Autor</span>
+    <span class="cm">// Não setamos ID: o banco vai gerar automaticamente</span>
+  }
+
+  <span class="cm">// Entidade JPA → DTO de saída (public para o LivroService usar)</span>
+  <span class="kw">public</span> <span class="tp">AutorResponseDTO</span> <span class="mt">paraResponseDTO</span>(<span class="tp">Autor</span> a) {
+    <span class="kw">return new</span> <span class="tp">AutorResponseDTO</span>(
+      a.<span class="mt">getId</span>(), a.<span class="mt">getNome</span>(), a.<span class="mt">getNacionalidade</span>(),
+      a.<span class="mt">getDataNascimento</span>(),
+      a.<span class="mt">getLivros</span>() != <span class="kw">null</span> ? a.<span class="mt">getLivros</span>().size() : <span class="nm">0</span>
+    );
+  }
+
+  <span class="kw">public</span> <span class="tp">AutorDTO</span>.<span class="tp">AutorResumoDTO</span> <span class="mt">paraResumoDTO</span>(<span class="tp">Autor</span> a) {
+    <span class="kw">return new</span> <span class="tp">AutorDTO</span>.<span class="tp">AutorResumoDTO</span>(a.<span class="mt">getId</span>(), a.<span class="mt">getNome</span>(), a.<span class="mt">getNacionalidade</span>());
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="section-title">📄 Crie: service/LivroService.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">service/</span><span class="file">LivroService.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.service;
+
+<span class="kw">import</span> com.projeto.biblioteca.dto.LivroDTO.*;
+<span class="kw">import</span> com.projeto.biblioteca.exception.BusinessException;
+<span class="kw">import</span> com.projeto.biblioteca.exception.ResourceNotFoundException;
+<span class="kw">import</span> com.projeto.biblioteca.model.Autor;
+<span class="kw">import</span> com.projeto.biblioteca.model.Livro;
+<span class="kw">import</span> com.projeto.biblioteca.repository.AutorRepository;
+<span class="kw">import</span> com.projeto.biblioteca.repository.LivroRepository;
+<span class="kw">import</span> org.springframework.stereotype.Service;
+<span class="kw">import</span> org.springframework.transaction.annotation.Transactional;
+<span class="kw">import</span> java.math.BigDecimal;
+<span class="kw">import</span> java.util.List;
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="tp">LivroService</span> {
+
+  <span class="cm">// Dois repositories + AutorService (para conversão de DTO)</span>
+  <span class="kw">private final</span> <span class="tp">LivroRepository</span>  livroRepository;
+  <span class="kw">private final</span> <span class="tp">AutorRepository</span>  autorRepository;
+  <span class="kw">private final</span> <span class="tp">AutorService</span>     autorService;
+
+  <span class="kw">public</span> <span class="mt">LivroService</span>(<span class="tp">LivroRepository</span> livroRepository,
+                       <span class="tp">AutorRepository</span> autorRepository,
+                       <span class="tp">AutorService</span> autorService) {
+    <span class="kw">this</span>.livroRepository = livroRepository;
+    <span class="kw">this</span>.autorRepository = autorRepository;
+    <span class="kw">this</span>.autorService = autorService;
+  }
+
+  <span class="an">@Transactional</span>
+  <span class="kw">public</span> <span class="tp">LivroResponseDTO</span> <span class="mt">criar</span>(<span class="tp">LivroRequestDTO</span> dto) {
+    <span class="cm">// Regra: ISBN é único no mundo — não pode duplicar</span>
+    <span class="kw">if</span> (livroRepository.<span class="mt">existsByIsbn</span>(dto.isbn()))
+      <span class="kw">throw new</span> <span class="tp">BusinessException</span>(<span class="st">"Já existe um livro com o ISBN: "</span> + dto.isbn());
+
+    <span class="cm">// Buscar o Autor pelo ID recebido no DTO</span>
+    Autor autor = autorRepository.<span class="mt">findById</span>(dto.autorId())
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Autor"</span>, <span class="st">"id"</span>, dto.autorId()));
+
+    Livro livro = <span class="mt">paraEntidade</span>(dto, autor);
+    <span class="kw">return</span> <span class="mt">paraResponseDTO</span>(livroRepository.<span class="mt">save</span>(livro));
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">listarTodos</span>() {
+    <span class="kw">return</span> livroRepository.<span class="mt">findAllByOrderByTituloAsc</span>()
+      .stream().<span class="mt">map</span>(<span class="kw">this</span>::paraResponseDTO).<span class="mt">toList</span>();
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">LivroResponseDTO</span> <span class="mt">buscarPorId</span>(<span class="tp">Long</span> id) {
+    <span class="kw">return</span> <span class="mt">paraResponseDTO</span>(livroRepository.<span class="mt">findById</span>(id)
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Livro"</span>, <span class="st">"id"</span>, id)));
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">LivroResponseDTO</span> <span class="mt">buscarPorIsbn</span>(<span class="tp">String</span> isbn) {
+    <span class="kw">return</span> <span class="mt">paraResponseDTO</span>(livroRepository.<span class="mt">findByIsbn</span>(isbn)
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Livro"</span>, <span class="st">"isbn"</span>, isbn)));
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">buscarPorTitulo</span>(<span class="tp">String</span> titulo) {
+    <span class="kw">return</span> livroRepository.<span class="mt">findByTituloContainingIgnoreCase</span>(titulo)
+      .stream().<span class="mt">map</span>(<span class="kw">this</span>::paraResponseDTO).<span class="mt">toList</span>();
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">listarPorAutor</span>(<span class="tp">Long</span> autorId) {
+    <span class="kw">if</span> (!autorRepository.<span class="mt">existsById</span>(autorId))
+      <span class="kw">throw new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Autor"</span>, <span class="st">"id"</span>, autorId);
+    <span class="kw">return</span> livroRepository.<span class="mt">findByAutor_Id</span>(autorId)
+      .stream().<span class="mt">map</span>(<span class="kw">this</span>::paraResponseDTO).<span class="mt">toList</span>();
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">buscarPorFaixaPreco</span>(<span class="tp">BigDecimal</span> min, <span class="tp">BigDecimal</span> max) {
+    <span class="kw">if</span> (min.<span class="mt">compareTo</span>(max) &gt; <span class="nm">0</span>) <span class="cm">// compareTo: 1 = maior, 0 = igual, -1 = menor</span>
+      <span class="kw">throw new</span> <span class="tp">BusinessException</span>(<span class="st">"Preço mínimo maior que o máximo"</span>);
+    <span class="kw">return</span> livroRepository.<span class="mt">findByPrecoBetween</span>(min, max)
+      .stream().<span class="mt">map</span>(<span class="kw">this</span>::paraResponseDTO).<span class="mt">toList</span>();
+  }
+
+  <span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">listarDisponiveis</span>() {
+    <span class="kw">return</span> livroRepository.<span class="mt">findLivrosDisponiveis</span>()
+      .stream().<span class="mt">map</span>(<span class="kw">this</span>::paraResponseDTO).<span class="mt">toList</span>();
+  }
+
+  <span class="an">@Transactional</span>
+  <span class="kw">public</span> <span class="tp">LivroResponseDTO</span> <span class="mt">atualizar</span>(<span class="tp">Long</span> id, <span class="tp">LivroRequestDTO</span> dto) {
+    Livro livro = livroRepository.<span class="mt">findById</span>(id)
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Livro"</span>, <span class="st">"id"</span>, id));
+    <span class="cm">// Se outro livro tem o mesmo ISBN, é conflito</span>
+    <span class="kw">if</span> (livroRepository.<span class="mt">existsByIsbnAndIdNot</span>(dto.isbn(), id))
+      <span class="kw">throw new</span> <span class="tp">BusinessException</span>(<span class="st">"Outro livro já usa o ISBN: "</span> + dto.isbn());
+    Autor autor = autorRepository.<span class="mt">findById</span>(dto.autorId())
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Autor"</span>, <span class="st">"id"</span>, dto.autorId()));
+    livro.<span class="mt">setTitulo</span>(dto.titulo()); livro.<span class="mt">setIsbn</span>(dto.isbn());
+    livro.<span class="mt">setAnoPublicacao</span>(dto.anoPublicacao()); livro.<span class="mt">setPreco</span>(dto.preco());
+    livro.<span class="mt">setEstoque</span>(dto.estoque()); livro.<span class="mt">setAutor</span>(autor);
+    <span class="kw">return</span> <span class="mt">paraResponseDTO</span>(livroRepository.<span class="mt">save</span>(livro));
+  }
+
+  <span class="an">@Transactional</span>
+  <span class="kw">public</span> <span class="tp">LivroResponseDTO</span> <span class="mt">atualizarEstoque</span>(<span class="tp">Long</span> id, <span class="tp">AtualizarEstoqueDTO</span> dto) {
+    Livro livro = livroRepository.<span class="mt">findById</span>(id)
+      .<span class="mt">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Livro"</span>, <span class="st">"id"</span>, id));
+    livro.<span class="mt">setEstoque</span>(dto.estoque());
+    <span class="kw">return</span> <span class="mt">paraResponseDTO</span>(livroRepository.<span class="mt">save</span>(livro));
+  }
+
+  <span class="an">@Transactional</span>
+  <span class="kw">public void</span> <span class="mt">deletar</span>(<span class="tp">Long</span> id) {
+    <span class="kw">if</span> (!livroRepository.<span class="mt">existsById</span>(id))
+      <span class="kw">throw new</span> <span class="tp">ResourceNotFoundException</span>(<span class="st">"Livro"</span>, <span class="st">"id"</span>, id);
+    livroRepository.<span class="mt">deleteById</span>(id);
+  }
+
+  <span class="kw">private</span> <span class="tp">Livro</span> <span class="mt">paraEntidade</span>(<span class="tp">LivroRequestDTO</span> dto, <span class="tp">Autor</span> autor) {
+    <span class="kw">return</span> Livro.builder()
+      .<span class="mt">titulo</span>(dto.titulo()).<span class="mt">isbn</span>(dto.isbn())
+      .<span class="mt">anoPublicacao</span>(dto.anoPublicacao()).<span class="mt">preco</span>(dto.preco())
+      .<span class="mt">estoque</span>(dto.estoque()).<span class="mt">autor</span>(autor).<span class="mt">build</span>();
+  }
+
+  <span class="kw">public</span> <span class="tp">LivroResponseDTO</span> <span class="mt">paraResponseDTO</span>(<span class="tp">Livro</span> l) {
+    <span class="kw">return new</span> <span class="tp">LivroResponseDTO</span>(
+      l.<span class="mt">getId</span>(), l.<span class="mt">getTitulo</span>(), l.<span class="mt">getIsbn</span>(), l.<span class="mt">getAnoPublicacao</span>(),
+      l.<span class="mt">getPreco</span>(), l.<span class="mt">getEstoque</span>(),
+      autorService.<span class="mt">paraResumoDTO</span>(l.<span class="mt">getAutor</span>()) <span class="cm">// DTO aninhado do autor</span>
+    );
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done7">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(6)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(7)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(8)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 9 — CONTROLLER
+════════════════════════════════════════════════════ -->
+<div class="step" id="s8">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#dcfce7;">🌐</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--green)">Etapa 9 de 10 · Código</div>
+      <div class="card-title">Controllers — Endpoints HTTP</div>
+      <div class="card-sub">A porta de entrada da API: cada método é uma URL que o mundo pode chamar.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="callout concept">
+      <div class="callout-title">🧠 Conceito — REST e HTTP</div>
+      <p><strong>HTTP</strong> é o protocolo que o browser e qualquer app usa para se comunicar. Tem "verbos" que indicam a intenção:</p>
+      <ul>
+        <li><strong>GET</strong> → ler/buscar dados (não modifica nada)</li>
+        <li><strong>POST</strong> → criar um novo recurso</li>
+        <li><strong>PUT</strong> → substituir um recurso por completo</li>
+        <li><strong>PATCH</strong> → atualizar parte de um recurso</li>
+        <li><strong>DELETE</strong> → remover um recurso</li>
+      </ul>
+      <p>O Controller mapeia cada URL + verbo para um método Java.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 Mapa de todos os endpoints</div>
+    <table class="http-table">
+      <tr><th>Verbo</th><th>URL</th><th>O que faz</th><th>Retorna</th></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td>/autores</td><td>Lista todos (ou filtra por ?nome=)</td><td><span class="badge badge-200">200</span></td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td>/autores/{id}</td><td>Busca autor por ID</td><td><span class="badge badge-200">200</span> ou <span class="badge badge-404">404</span></td></tr>
+      <tr><td><span class="badge badge-post">POST</span></td><td>/autores</td><td>Cria novo autor</td><td><span class="badge badge-201">201</span></td></tr>
+      <tr><td><span class="badge badge-put">PUT</span></td><td>/autores/{id}</td><td>Atualiza autor</td><td><span class="badge badge-200">200</span></td></tr>
+      <tr><td><span class="badge badge-delete">DELETE</span></td><td>/autores/{id}</td><td>Deleta autor</td><td>204</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td>/livros</td><td>Lista todos (filtros: ?titulo= ?precoMin= ?precoMax=)</td><td><span class="badge badge-200">200</span></td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td>/livros/{id}</td><td>Busca livro por ID</td><td><span class="badge badge-200">200</span></td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td>/livros/disponiveis</td><td>Livros com estoque > 0</td><td><span class="badge badge-200">200</span></td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td>/livros/autor/{id}</td><td>Livros de um autor</td><td><span class="badge badge-200">200</span></td></tr>
+      <tr><td><span class="badge badge-post">POST</span></td><td>/livros</td><td>Cria novo livro</td><td><span class="badge badge-201">201</span></td></tr>
+      <tr><td><span class="badge badge-put">PUT</span></td><td>/livros/{id}</td><td>Atualiza livro</td><td><span class="badge badge-200">200</span></td></tr>
+      <tr><td><span class="badge badge-patch">PATCH</span></td><td>/livros/{id}/estoque</td><td>Atualiza só o estoque</td><td><span class="badge badge-200">200</span></td></tr>
+      <tr><td><span class="badge badge-delete">DELETE</span></td><td>/livros/{id}</td><td>Deleta livro</td><td>204</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Crie: controller/AutorController.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">controller/</span><span class="file">AutorController.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.controller;
+
+<span class="kw">import</span> com.projeto.biblioteca.dto.AutorDTO.*;
+<span class="kw">import</span> com.projeto.biblioteca.service.AutorService;
+<span class="kw">import</span> jakarta.validation.Valid;
+<span class="kw">import</span> org.springframework.http.*;
+<span class="kw">import</span> org.springframework.web.bind.annotation.*;
+<span class="kw">import</span> java.util.List;
+
+<span class="an">@RestController</span>
+<span class="cm">// @RestController combina:
+//   @Controller     = esta classe trata requisições HTTP
+//   @ResponseBody   = o retorno dos métodos vai direto no corpo JSON
+// Então ao retornar um objeto Java, o Spring automaticamente
+// converte para JSON e manda para o cliente.</span>
+
+<span class="an">@RequestMapping</span>(<span class="st">"/autores"</span>)
+<span class="cm">// @RequestMapping define o PREFIXO de todas as rotas neste controller.
+// Todos os endpoints começam com /autores</span>
+
+<span class="an">@CrossOrigin</span>(origins = <span class="st">"*"</span>)
+<span class="cm">// @CrossOrigin permite que outros domínios (front-end, Postman)
+// chamem esta API. origins = "*" = qualquer origem.</span>
+
+<span class="kw">public class</span> <span class="tp">AutorController</span> {
+
+  <span class="kw">private final</span> <span class="tp">AutorService</span> autorService;
+
+  <span class="kw">public</span> <span class="mt">AutorController</span>(<span class="tp">AutorService</span> autorService) {
+    <span class="kw">this</span>.autorService = autorService;
+  }
+
+  <span class="cm">// ── POST /autores ─────────────────────────────────────────
+  // Cria um novo autor.
+  // @PostMapping = aceita requisições HTTP POST em /autores</span>
+  <span class="an">@PostMapping</span>
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">AutorResponseDTO</span>&gt; <span class="mt">criar</span>(
+      <span class="an">@Valid</span> <span class="an">@RequestBody</span> <span class="tp">AutorRequestDTO</span> dto) {
+    <span class="cm">// @Valid = ativa as validações (@NotBlank, @Size...) do DTO.
+    //         Se falhar, lança exceção → GlobalExceptionHandler captura → 400
+    // @RequestBody = lê o corpo JSON da requisição e converte para AutorRequestDTO</span>
+
+    AutorResponseDTO resposta = autorService.<span class="mt">criar</span>(dto);
+    <span class="kw">return</span> ResponseEntity
+      .<span class="mt">status</span>(HttpStatus.CREATED) <span class="cm">// HTTP 201 Created</span>
+      .<span class="mt">body</span>(resposta);
+  }
+
+  <span class="cm">// ── GET /autores ou GET /autores?nome=machado ─────────────</span>
+  <span class="an">@GetMapping</span>
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">List</span>&lt;<span class="tp">AutorResponseDTO</span>&gt;&gt; <span class="mt">listar</span>(
+      <span class="an">@RequestParam</span>(required = <span class="kw">false</span>) <span class="tp">String</span> nome) {
+    <span class="cm">// @RequestParam = lê parâmetro da URL: /autores?nome=machado
+    // required = false = parâmetro é opcional. Se não informar, nome = null.</span>
+
+    <span class="kw">if</span> (nome != <span class="kw">null</span> && !nome.<span class="mt">isBlank</span>())
+      <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(autorService.<span class="mt">buscarPorNome</span>(nome));
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(autorService.<span class="mt">listarTodos</span>()); <span class="cm">// HTTP 200 OK</span>
+  }
+
+  <span class="cm">// ── GET /autores/1 ────────────────────────────────────────</span>
+  <span class="an">@GetMapping</span>(<span class="st">"/{id}"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">AutorResponseDTO</span>&gt; <span class="mt">buscarPorId</span>(
+      <span class="an">@PathVariable</span> <span class="tp">Long</span> id) {
+    <span class="cm">// @PathVariable = extrai o {id} da URL.
+    // GET /autores/3 → id = 3L</span>
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(autorService.<span class="mt">buscarPorId</span>(id));
+  }
+
+  <span class="cm">// ── PUT /autores/1 ────────────────────────────────────────</span>
+  <span class="an">@PutMapping</span>(<span class="st">"/{id}"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">AutorResponseDTO</span>&gt; <span class="mt">atualizar</span>(
+      <span class="an">@PathVariable</span> <span class="tp">Long</span> id,
+      <span class="an">@Valid</span> <span class="an">@RequestBody</span> <span class="tp">AutorRequestDTO</span> dto) {
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(autorService.<span class="mt">atualizar</span>(id, dto));
+  }
+
+  <span class="cm">// ── DELETE /autores/1 ─────────────────────────────────────</span>
+  <span class="an">@DeleteMapping</span>(<span class="st">"/{id}"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">Void</span>&gt; <span class="mt">deletar</span>(<span class="an">@PathVariable</span> <span class="tp">Long</span> id) {
+    autorService.<span class="mt">deletar</span>(id);
+    <span class="kw">return</span> ResponseEntity.<span class="mt">noContent</span>().<span class="mt">build</span>();
+    <span class="cm">// HTTP 204 No Content = sucesso, sem corpo na resposta.
+    // Faz sentido: o recurso foi deletado, não tem mais nada para retornar.</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="section-title">📄 Crie: controller/LivroController.java</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-fname"><span class="path">controller/</span><span class="file">LivroController.java</span></div>
+        <button class="copy-btn" onclick="cp(this)">Copiar</button>
+      </div>
+      <pre><span class="kw">package</span> com.projeto.biblioteca.controller;
+
+<span class="kw">import</span> com.projeto.biblioteca.dto.LivroDTO.*;
+<span class="kw">import</span> com.projeto.biblioteca.service.LivroService;
+<span class="kw">import</span> jakarta.validation.Valid;
+<span class="kw">import</span> org.springframework.http.*;
+<span class="kw">import</span> org.springframework.web.bind.annotation.*;
+<span class="kw">import</span> java.math.BigDecimal;
+<span class="kw">import</span> java.util.List;
+
+<span class="an">@RestController</span>
+<span class="an">@RequestMapping</span>(<span class="st">"/livros"</span>)
+<span class="an">@CrossOrigin</span>(origins = <span class="st">"*"</span>)
+<span class="kw">public class</span> <span class="tp">LivroController</span> {
+
+  <span class="kw">private final</span> <span class="tp">LivroService</span> livroService;
+  <span class="kw">public</span> <span class="mt">LivroController</span>(<span class="tp">LivroService</span> livroService) { <span class="kw">this</span>.livroService = livroService; }
+
+  <span class="an">@PostMapping</span>
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">criar</span>(<span class="an">@Valid</span> <span class="an">@RequestBody</span> <span class="tp">LivroRequestDTO</span> dto) {
+    <span class="kw">return</span> ResponseEntity.<span class="mt">status</span>(HttpStatus.CREATED).<span class="mt">body</span>(livroService.<span class="mt">criar</span>(dto));
+  }
+
+  <span class="cm">// GET /livros ou GET /livros?titulo=dom ou GET /livros?precoMin=20&precoMax=50</span>
+  <span class="an">@GetMapping</span>
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">List</span>&lt;<span class="tp">LivroResponseDTO</span>&gt;&gt; <span class="mt">listar</span>(
+      <span class="an">@RequestParam</span>(required = <span class="kw">false</span>) <span class="tp">String</span> titulo,
+      <span class="an">@RequestParam</span>(required = <span class="kw">false</span>) <span class="tp">BigDecimal</span> precoMin,
+      <span class="an">@RequestParam</span>(required = <span class="kw">false</span>) <span class="tp">BigDecimal</span> precoMax) {
+
+    <span class="kw">if</span> (titulo != <span class="kw">null</span> && !titulo.<span class="mt">isBlank</span>())
+      <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(livroService.<span class="mt">buscarPorTitulo</span>(titulo));
+    <span class="kw">if</span> (precoMin != <span class="kw">null</span> && precoMax != <span class="kw">null</span>)
+      <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(livroService.<span class="mt">buscarPorFaixaPreco</span>(precoMin, precoMax));
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(livroService.<span class="mt">listarTodos</span>());
+  }
+
+  <span class="cm">// ⚠️ IMPORTANTE: endpoints específicos ANTES do /{id}!
+  // Se /disponiveis viesse depois, o Spring tentaria converter
+  // "disponiveis" como um Long (id) e daria erro.</span>
+  <span class="an">@GetMapping</span>(<span class="st">"/disponiveis"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">List</span>&lt;<span class="tp">LivroResponseDTO</span>&gt;&gt; <span class="mt">disponiveis</span>() {
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(livroService.<span class="mt">listarDisponiveis</span>());
+  }
+
+  <span class="an">@GetMapping</span>(<span class="st">"/autor/{autorId}"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">List</span>&lt;<span class="tp">LivroResponseDTO</span>&gt;&gt; <span class="mt">porAutor</span>(<span class="an">@PathVariable</span> <span class="tp">Long</span> autorId) {
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(livroService.<span class="mt">listarPorAutor</span>(autorId));
+  }
+
+  <span class="an">@GetMapping</span>(<span class="st">"/{id}"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">buscarPorId</span>(<span class="an">@PathVariable</span> <span class="tp">Long</span> id) {
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(livroService.<span class="mt">buscarPorId</span>(id));
+  }
+
+  <span class="an">@PutMapping</span>(<span class="st">"/{id}"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">atualizar</span>(
+      <span class="an">@PathVariable</span> <span class="tp">Long</span> id, <span class="an">@Valid</span> <span class="an">@RequestBody</span> <span class="tp">LivroRequestDTO</span> dto) {
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(livroService.<span class="mt">atualizar</span>(id, dto));
+  }
+
+  <span class="cm">// PATCH = atualização PARCIAL. Só atualiza o estoque,
+  // sem precisar enviar todos os outros campos do livro.</span>
+  <span class="an">@PatchMapping</span>(<span class="st">"/{id}/estoque"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">LivroResponseDTO</span>&gt; <span class="mt">atualizarEstoque</span>(
+      <span class="an">@PathVariable</span> <span class="tp">Long</span> id, <span class="an">@Valid</span> <span class="an">@RequestBody</span> <span class="tp">AtualizarEstoqueDTO</span> dto) {
+    <span class="kw">return</span> ResponseEntity.<span class="mt">ok</span>(livroService.<span class="mt">atualizarEstoque</span>(id, dto));
+  }
+
+  <span class="an">@DeleteMapping</span>(<span class="st">"/{id}"</span>)
+  <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">Void</span>&gt; <span class="mt">deletar</span>(<span class="an">@PathVariable</span> <span class="tp">Long</span> id) {
+    livroService.<span class="mt">deletar</span>(id);
+    <span class="kw">return</span> ResponseEntity.<span class="mt">noContent</span>().<span class="mt">build</span>();
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done8">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(7)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(8)">Concluir ✓</button>
+      <button class="btn btn-ghost" onclick="go(9)">Próxima →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     STEP 10 — RODAR E TESTAR
+════════════════════════════════════════════════════ -->
+<div class="step" id="s9">
+<div class="step-card">
+  <div class="card-header">
+    <div class="card-icon" style="background:#fef9c3;">🚀</div>
+    <div class="card-meta">
+      <div class="card-step-num" style="color:var(--amber)">Etapa 10 de 10 · Testar</div>
+      <div class="card-title">Rodar a API e Testar no Postman</div>
+      <div class="card-sub">Subir a aplicação e fazer chamadas HTTP para ver tudo funcionando.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">▶️ Rodar o projeto</div>
+    <div class="callout tip">
+      <div class="callout-title">✅ Opção 1 — IntelliJ (mais fácil)</div>
+      <p>Abra o arquivo <code>BibliotecaApplication.java</code> no IntelliJ. Clique no botão <strong>▶️ verde</strong> ao lado do método <code>main()</code> e selecione "Run". A aba "Run" vai aparecer na parte de baixo com os logs.</p>
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-label"><div class="tl-dot" style="background:#ff5f57"></div><div class="tl-dot" style="background:#febc2e"></div><div class="tl-dot" style="background:#28c840"></div>&nbsp;Opção 2 — Terminal</div>
+      <div class="terminal">
+        <div><span class="comment"># Entrar na pasta do projeto</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">cd biblioteca</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Rodar com Maven (baixa dependências + compila + inicia)</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">mvn spring-boot:run</span></div>
+        <span class="gap"></span>
+        <div><span class="comment"># Aguarde... você vai ver no log:</span></div>
+        <div><span class="out">  .   ____          _            __ _ _</span></div>
+        <div><span class="out"> /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \</span></div>
+        <div><span class="out">Started BibliotecaApplication in 3.2 seconds</span></div>
+        <div><span class="ok">✅ API rodando em: http://localhost:8080</span></div>
+        <div><span class="ok">🗄️  H2 Console:    http://localhost:8080/h2-console</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🗄️ Ver o banco de dados (H2 Console)</div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet">1</div>
+        <div class="step-content">
+          <strong>Abra no navegador:</strong>
+          <p><code>http://localhost:8080/h2-console</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">2</div>
+        <div class="step-content">
+          <strong>Preencha a conexão:</strong>
+          <p>JDBC URL: <code>jdbc:h2:mem:biblioteca</code> · Username: <code>sa</code> · Password: (vazio)</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet">3</div>
+        <div class="step-content">
+          <strong>Clique Connect e execute SQL:</strong>
+          <p>No editor que abrir, cole e rode: <code>SELECT * FROM autores;</code><br>Você vai ver os 4 autores do data.sql listados!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔬 Configurar o Postman</div>
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Como usar o Postman</div>
+      <p>Abra o Postman. Clique em <strong>"+"</strong> para nova aba. Selecione o método HTTP (GET, POST...), cole a URL e clique em <strong>Send</strong>. Para POST/PUT, vá em <strong>Body → raw → JSON</strong> e cole o JSON.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🧪 Testes — Autores</div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Listar todos os autores</strong>
+          <p><code>http://localhost:8080/autores</code> → deve retornar lista com 4 autores</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Buscar autor por ID</strong>
+          <p><code>http://localhost:8080/autores/1</code> → Machado de Assis</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Buscar por nome</strong>
+          <p><code>http://localhost:8080/autores?nome=machado</code> → filtra por nome</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Testar erro 404</strong>
+          <p><code>http://localhost:8080/autores/999</code> → deve retornar <code>{"status":404,"mensagem":"Autor com id '999' não encontrado",...}</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-post" style="font-size:9px">POST</span></div>
+        <div class="step-content">
+          <strong>Criar novo autor</strong>
+          <p><code>http://localhost:8080/autores</code> · Body → raw → JSON:</p>
+        </div>
+      </div>
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-label">Body JSON — POST /autores</div>
+      <div class="terminal">
+        <div>{</div>
+        <div>&nbsp;&nbsp;<span class="hi">"nome"</span>: <span class="st">"Carlos Drummond de Andrade"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="hi">"nacionalidade"</span>: <span class="st">"Brasileiro"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="hi">"dataNascimento"</span>: <span class="st">"1902-10-31"</span></div>
+        <div>}</div>
+        <span class="gap"></span>
+        <div><span class="comment">→ Retorna 201 Created com o autor criado (id gerado automaticamente)</span></div>
+      </div>
+    </div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-put" style="font-size:9px">PUT</span></div>
+        <div class="step-content">
+          <strong>Atualizar autor</strong>
+          <p><code>http://localhost:8080/autores/5</code> com o mesmo JSON acima (modificado)</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-delete" style="font-size:9px">DEL</span></div>
+        <div class="step-content">
+          <strong>Deletar autor (sem livros)</strong>
+          <p><code>http://localhost:8080/autores/5</code> → deve retornar 204 No Content</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🧪 Testes — Livros</div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Listar todos os livros</strong>
+          <p><code>http://localhost:8080/livros</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Buscar por título</strong>
+          <p><code>http://localhost:8080/livros?titulo=casmurro</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Livros disponíveis</strong>
+          <p><code>http://localhost:8080/livros/disponiveis</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Filtrar por preço</strong>
+          <p><code>http://localhost:8080/livros?precoMin=20&precoMax=35</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-get" style="font-size:9px">GET</span></div>
+        <div class="step-content">
+          <strong>Livros de um autor</strong>
+          <p><code>http://localhost:8080/livros/autor/1</code> → livros do Machado de Assis</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-post" style="font-size:9px">POST</span></div>
+        <div class="step-content">
+          <strong>Criar livro</strong>
+          <p><code>http://localhost:8080/livros</code> · Body JSON:</p>
+        </div>
+      </div>
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-label">Body JSON — POST /livros</div>
+      <div class="terminal">
+        <div>{</div>
+        <div>&nbsp;&nbsp;<span class="hi">"titulo"</span>:         <span class="st">"Quincas Borba"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="hi">"isbn"</span>:           <span class="st">"978-85-359-0300-0"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="hi">"anoPublicacao"</span>:  <span class="nm">1891</span>,</div>
+        <div>&nbsp;&nbsp;<span class="hi">"preco"</span>:          <span class="nm">33.90</span>,</div>
+        <div>&nbsp;&nbsp;<span class="hi">"estoque"</span>:        <span class="nm">12</span>,</div>
+        <div>&nbsp;&nbsp;<span class="hi">"autorId"</span>:        <span class="nm">1</span></div>
+        <div>}</div>
+      </div>
+    </div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-bullet"><span class="badge badge-patch" style="font-size:9px">PATCH</span></div>
+        <div class="step-content">
+          <strong>Atualizar só o estoque</strong>
+          <p><code>http://localhost:8080/livros/1/estoque</code> · Body: <code>{"estoque": 99}</code></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚡ Testando as validações (erros 400)</div>
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Tente enviar dados inválidos</div>
+      <p>Mande um POST sem o campo "nome" e veja o retorno <code>400 Bad Request</code> com a mensagem de erro "Nome é obrigatório". Isso é o <code>@Valid</code> + <code>GlobalExceptionHandler</code> em ação!</p>
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-label">POST /autores — com dados inválidos</div>
+      <div class="terminal">
+        <div><span class="comment">Enviar:</span></div>
+        <div>{ <span class="hi">"nome"</span>: <span class="st">""</span>, <span class="hi">"nacionalidade"</span>: <span class="st">"Brasileiro"</span> }</div>
+        <span class="gap"></span>
+        <div><span class="comment">Resposta 400 Bad Request:</span></div>
+        <div>{</div>
+        <div>&nbsp;&nbsp;<span class="hi">"status"</span>: <span class="nm">400</span>,</div>
+        <div>&nbsp;&nbsp;<span class="hi">"campos"</span>: {</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hi">"nome"</span>: <span class="err">"Nome é obrigatório"</span></div>
+        <div>&nbsp;&nbsp;},</div>
+        <div>&nbsp;&nbsp;<span class="hi">"timestamp"</span>: <span class="st">"2024-01-15T10:30:00"</span></div>
+        <div>}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-bottom:24px">
+    <div class="callout tip">
+      <div class="callout-title">🎉 Se chegou até aqui, você tem uma API REST completa funcionando!</div>
+      <p>Você instalou o ambiente, criou um projeto Spring Boot do zero, conectou com banco de dados, implementou o padrão de arquitetura em camadas (Controller → Service → Repository → BD), validação de dados, tratamento de erros e testou tudo com o Postman.</p>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="done-badge" id="done9">✅ Etapa concluída</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(8)">← Anterior</button>
+      <button class="btn btn-success" onclick="done(9)">Finalizar guia 🎉</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════ FINISH SCREEN ════════════════ -->
+<div id="finish">
+  <div class="big">🎊</div>
+  <h2>Você terminou o <span>guia completo!</span></h2>
+  <p>De absoluto zero até uma API REST Java com Spring Boot funcionando — banco de dados, validação, tratamento de erros, e todos os endpoints testados no Postman. Parabéns!</p>
+  <div class="next-grid">
+    <span class="next-chip">🔐 Spring Security + JWT</span>
+    <span class="next-chip">📄 Swagger / OpenAPI</span>
+    <span class="next-chip">🐘 PostgreSQL real</span>
+    <span class="next-chip">🐳 Docker</span>
+    <span class="next-chip">📦 Paginação (Pageable)</span>
+    <span class="next-chip">🧪 Testes de Integração</span>
+    <span class="next-chip">☁️ Deploy no Railway</span>
+    <span class="next-chip">🗺️ MapStruct (mapeamento)</span>
+  </div>
+</div>
+
+  </main>
+</div><!-- /page-body -->
+
+<script>
+const TOTAL = 10;
+const state = { completed: new Array(TOTAL).fill(false), current: 0 };
+
+function go(idx) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('visible'));
+  const el = document.getElementById('s' + idx);
+  if (el) { el.classList.add('visible'); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  document.querySelectorAll('.nav-item').forEach((n, i) => {
+    n.classList.toggle('active', i === idx);
+  });
+  state.current = idx;
+}
+
+function done(idx) {
+  state.completed[idx] = true;
+  const badge = document.getElementById('done' + idx);
+  if (badge) badge.classList.add('show');
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems[idx].classList.remove('active');
+  navItems[idx].classList.add('done');
+  navItems[idx].querySelector('.nav-dot').textContent = '✓';
+  updateProgress();
+  const total = state.completed.filter(Boolean).length;
+  if (total === TOTAL) {
+    setTimeout(() => {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('visible'));
+      document.getElementById('finish').classList.add('show');
+      document.getElementById('finish').scrollIntoView({ behavior: 'smooth' });
+    }, 400);
+  } else if (idx < TOTAL - 1) {
+    setTimeout(() => go(idx + 1), 350);
+  }
+}
+
+function updateProgress() {
+  const n = state.completed.filter(Boolean).length;
+  document.getElementById('progFill').style.width = (n / TOTAL * 100) + '%';
+  document.getElementById('progText').textContent = n + ' / ' + TOTAL;
+}
+
+function cp(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = '✓ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>

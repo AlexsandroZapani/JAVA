@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>☕ Java — Do Zero ao Avançado</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f14;
+  --bg2: #13161e;
+  --bg3: #1a1e2a;
+  --bg4: #20253a;
+  --surface: #1e2235;
+  --border: #2a3050;
+  --java: #f89820;
+  --java2: #e07010;
+  --accent: #4fc3f7;
+  --accent2: #29b6f6;
+  --green: #4caf82;
+  --red: #ef5350;
+  --purple: #9c7cf4;
+  --yellow: #ffd54f;
+  --text: #e2e8f0;
+  --muted: #8892a4;
+  --code-bg: #0a0c12;
+  --code-text: #c9d1e8;
+  --keyword: #ff79c6;
+  --string: #f1fa8c;
+  --comment: #6272a4;
+  --number: #bd93f9;
+  --type: #8be9fd;
+  --fn: #50fa7b;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--java); }
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 260px; height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  padding: 0 0 40px 0;
+}
+
+.sidebar-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.sidebar-logo .cup { font-size: 28px; }
+.sidebar-logo h1 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--java); letter-spacing: -0.5px; }
+.sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.nav-section { padding: 8px 0; }
+.nav-section-title {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+  padding: 6px 20px 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 20px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--text);
+  background: var(--bg3);
+  border-left-color: var(--java);
+}
+.nav-item .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--java); min-width: 18px;
+}
+
+/* MAIN */
+.main {
+  margin-left: 260px;
+  min-height: 100vh;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #0d0f14 0%, #13161e 40%, #1a1530 100%);
+  padding: 100px 60px 80px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '☕';
+  position: absolute;
+  right: -20px; top: -40px;
+  font-size: 280px;
+  opacity: 0.04;
+  transform: rotate(-15deg);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(248,152,32,0.1); border: 1px solid rgba(248,152,32,0.3);
+  color: var(--java); border-radius: 20px;
+  padding: 4px 14px; font-size: 12px; font-weight: 500;
+  margin-bottom: 24px; font-family: 'JetBrains Mono', monospace;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+}
+.hero h1 span { color: var(--java); }
+.hero p {
+  font-size: 18px; color: var(--muted);
+  max-width: 540px; margin-bottom: 40px; font-weight: 300;
+}
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px 12px;
+  font-size: 12px; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s;
+}
+.tag:hover { border-color: var(--java); color: var(--java); }
+
+/* CONTENT */
+.content { padding: 0 60px 100px; max-width: 900px; }
+
+/* CHAPTER */
+.chapter {
+  padding: 70px 0 40px;
+  border-bottom: 1px solid var(--border);
+  animation: fadeIn 0.5s ease;
+}
+.chapter:last-child { border-bottom: none; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chapter-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 32px;
+}
+.chapter-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--java); font-weight: 700;
+  background: rgba(248,152,32,0.1); border: 1px solid rgba(248,152,32,0.25);
+  padding: 4px 10px; border-radius: 4px;
+}
+.chapter-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px; font-weight: 800;
+  letter-spacing: -1px; color: var(--text);
+}
+
+h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--text); margin: 36px 0 14px;
+  letter-spacing: -0.5px;
+}
+h2::before { content: '›'; color: var(--java); margin-right: 8px; }
+
+h3 {
+  font-size: 14px; font-weight: 600;
+  color: var(--accent); margin: 24px 0 10px;
+  text-transform: uppercase; letter-spacing: 1px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+p { margin-bottom: 14px; color: var(--muted); font-size: 15px; line-height: 1.75; }
+p strong { color: var(--text); font-weight: 500; }
+
+/* CODE BLOCKS */
+.code-wrap {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 18px 0;
+  overflow: hidden;
+}
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--bg3); border-bottom: 1px solid var(--border);
+}
+.code-dots { display: flex; gap: 6px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.code-dots .r { background: #ff5f57; }
+.code-dots .y { background: #febc2e; }
+.code-dots .g { background: #28c840; }
+.code-lang {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted); letter-spacing: 1px;
+}
+.copy-btn {
+  background: var(--bg4); border: 1px solid var(--border);
+  color: var(--muted); border-radius: 4px;
+  padding: 3px 10px; font-size: 11px; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s;
+}
+.copy-btn:hover { border-color: var(--java); color: var(--java); }
+
+pre {
+  padding: 20px 24px;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--code-text);
+}
+
+/* Syntax highlight classes */
+.kw { color: var(--keyword); }
+.st { color: var(--string); }
+.cm { color: var(--comment); font-style: italic; }
+.nm { color: var(--number); }
+.tp { color: var(--type); }
+.fn { color: var(--fn); }
+.an { color: #ff79c6; }
+.op { color: var(--muted); }
+
+/* CALLOUTS */
+.callout {
+  border-radius: 8px; padding: 16px 20px;
+  margin: 20px 0; font-size: 14px; line-height: 1.7;
+  border-left: 3px solid;
+}
+.callout-title { font-weight: 600; margin-bottom: 4px; font-size: 13px; letter-spacing: 0.5px; }
+.callout.info { background: rgba(79,195,247,0.08); border-color: var(--accent); }
+.callout.info .callout-title { color: var(--accent); }
+.callout.warning { background: rgba(255,213,79,0.08); border-color: var(--yellow); }
+.callout.warning .callout-title { color: var(--yellow); }
+.callout.danger { background: rgba(239,83,80,0.08); border-color: var(--red); }
+.callout.danger .callout-title { color: var(--red); }
+.callout.success { background: rgba(76,175,130,0.08); border-color: var(--green); }
+.callout.success .callout-title { color: var(--green); }
+.callout p { color: var(--muted); margin: 0; font-size: 13.5px; }
+
+/* LISTS */
+ul, ol { padding-left: 20px; margin: 12px 0 18px; }
+li { color: var(--muted); font-size: 14.5px; margin-bottom: 6px; line-height: 1.7; }
+li strong { color: var(--text); }
+li::marker { color: var(--java); }
+
+/* TABLES */
+.table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  background: var(--bg3); color: var(--text); font-weight: 600;
+  text-align: left; padding: 12px 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
+}
+td { padding: 11px 16px; border-bottom: 1px solid rgba(42,48,80,0.5); color: var(--muted); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg3); color: var(--text); }
+td:first-child { color: var(--java); font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+
+/* PATTERN CARDS */
+.pattern-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.pattern-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px;
+  transition: all 0.25s; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.pattern-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--java), var(--accent));
+  opacity: 0; transition: opacity 0.25s;
+}
+.pattern-card:hover { border-color: rgba(248,152,32,0.3); transform: translateY(-2px); }
+.pattern-card:hover::before { opacity: 1; }
+.pattern-tag {
+  font-size: 10px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.pattern-tag.creational { color: var(--green); }
+.pattern-tag.structural { color: var(--accent); }
+.pattern-tag.behavioral { color: var(--purple); }
+.pattern-card h4 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.pattern-card p { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.6; }
+
+/* TOPICS GRID */
+.topics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+.topic-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; text-align: center;
+  transition: all 0.2s;
+}
+.topic-card:hover { border-color: var(--java); }
+.topic-card .icon { font-size: 24px; margin-bottom: 8px; }
+.topic-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; font-family: 'Syne', sans-serif; }
+.topic-card p { font-size: 11.5px; color: var(--muted); margin: 0; }
+
+/* ROADMAP */
+.roadmap { position: relative; padding-left: 32px; margin: 20px 0; }
+.roadmap::before {
+  content: ''; position: absolute;
+  left: 10px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, var(--java), var(--accent), var(--purple));
+  border-radius: 2px;
+}
+.roadmap-item { position: relative; margin-bottom: 28px; }
+.roadmap-item::before {
+  content: ''; position: absolute;
+  left: -26px; top: 4px;
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid var(--java); background: var(--bg);
+}
+.roadmap-item.mid::before { border-color: var(--accent); }
+.roadmap-item.adv::before { border-color: var(--purple); }
+.roadmap-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; margin-bottom: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.roadmap-item .roadmap-label { color: var(--java); }
+.roadmap-item.mid .roadmap-label { color: var(--accent); }
+.roadmap-item.adv .roadmap-label { color: var(--purple); }
+.roadmap-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; font-family: 'Syne', sans-serif; }
+.roadmap-item p { font-size: 13px; color: var(--muted); margin: 0; }
+
+/* INLINE CODE */
+code:not(pre code) {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; font-size: 12.5px;
+  color: var(--accent);
+}
+
+/* SEARCH */
+.search-wrap {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.search-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; padding: 7px 12px;
+  color: var(--text); font-size: 12px; font-family: 'Inter', sans-serif;
+  outline: none; transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--java); }
+.search-input::placeholder { color: var(--muted); }
+
+/* PROGRESS BAR */
+.progress-bar {
+  position: fixed; top: 0; left: 260px; right: 0; height: 2px;
+  background: var(--border); z-index: 200;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--java), var(--accent));
+  width: 0%;
+  transition: width 0.1s;
+}
+
+/* VERSION BADGE */
+.version {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--green);
+  background: rgba(76,175,130,0.1); border: 1px solid rgba(76,175,130,0.3);
+  border-radius: 4px; padding: 1px 7px; margin-left: 6px; vertical-align: middle;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .sidebar { width: 220px; }
+  .main { margin-left: 220px; }
+  .hero { padding: 60px 32px; }
+  .content { padding: 0 32px 80px; }
+  .pattern-grid { grid-template-columns: 1fr; }
+  .topics-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .progress-bar { left: 0; }
+}
+
+/* FOOTER */
+.footer {
+  background: var(--bg2); border-top: 1px solid var(--border);
+  padding: 40px 60px; text-align: center;
+  margin-left: 0;
+}
+.footer p { color: var(--muted); font-size: 13px; margin: 0; }
+.footer span { color: var(--java); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="cup">☕</div>
+    <h1>Java Guide</h1>
+    <p>Do Zero ao Avançado</p>
+  </div>
+  <div class="search-wrap">
+    <input class="search-input" type="text" placeholder="🔍 Buscar capítulo..." id="searchInput" oninput="filterNav(this.value)">
+  </div>
+  <nav id="navList">
+    <div class="nav-section">
+      <div class="nav-section-title">Fundamentos</div>
+      <a class="nav-item" href="#cap01"><span class="num">01</span> Ambiente</a>
+      <a class="nav-item" href="#cap02"><span class="num">02</span> Tipos e Variáveis</a>
+      <a class="nav-item" href="#cap03"><span class="num">03</span> Controle e Loops</a>
+      <a class="nav-item" href="#cap04"><span class="num">04</span> Métodos</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Orientação a Objetos</div>
+      <a class="nav-item" href="#cap05"><span class="num">05</span> Classes e Objetos</a>
+      <a class="nav-item" href="#cap06"><span class="num">06</span> Herança e Polimorfismo</a>
+      <a class="nav-item" href="#cap07"><span class="num">07</span> Interfaces e Abstratas</a>
+      <a class="nav-item" href="#cap08"><span class="num">08</span> Records e Enums</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Java Moderno</div>
+      <a class="nav-item" href="#cap09"><span class="num">09</span> Coleções e Generics</a>
+      <a class="nav-item" href="#cap10"><span class="num">10</span> Streams e Lambdas</a>
+      <a class="nav-item" href="#cap11"><span class="num">11</span> Exceções</a>
+      <a class="nav-item" href="#cap12"><span class="num">12</span> Optional</a>
+      <a class="nav-item" href="#cap13"><span class="num">13</span> Arquivos e I/O</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Concorrência</div>
+      <a class="nav-item" href="#cap14"><span class="num">14</span> Threads e Concorrência</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Banco de Dados</div>
+      <a class="nav-item" href="#cap15"><span class="num">15</span> JDBC</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Spring Framework</div>
+      <a class="nav-item" href="#cap16"><span class="num">16</span> Spring Boot</a>
+      <a class="nav-item" href="#cap17"><span class="num">17</span> API REST</a>
+      <a class="nav-item" href="#cap18"><span class="num">18</span> Spring Security + JWT</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Arquitetura</div>
+      <a class="nav-item" href="#cap19"><span class="num">19</span> Design Patterns</a>
+      <a class="nav-item" href="#cap20"><span class="num">20</span> Testes com JUnit</a>
+      <a class="nav-item" href="#cap21"><span class="num">21</span> Boas Práticas</a>
+      <a class="nav-item" href="#cap22"><span class="num">22</span> Próximos Passos</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">☕ java &nbsp;·&nbsp; JDK 21 LTS &nbsp;·&nbsp; Spring Boot 3</div>
+  <h1>Java<br><span>do Zero</span> ao<br>Avançado</h1>
+  <p>Manual completo e prático — desde instalar o JDK até criar APIs REST com Spring Boot, Design Patterns e testes.</p>
+  <div class="hero-tags">
+    <span class="tag">fundamentos</span><span class="tag">POO</span><span class="tag">coleções</span>
+    <span class="tag">streams</span><span class="tag">threads</span><span class="tag">JDBC</span>
+    <span class="tag">spring-boot</span><span class="tag">jwt</span><span class="tag">design-patterns</span>
+    <span class="tag">junit</span><span class="tag">clean-code</span><span class="tag">SOLID</span>
+  </div>
+</section>
+
+<div class="content">
+
+<!-- CAP 01 -->
+<section class="chapter" id="cap01">
+  <div class="chapter-header">
+    <span class="chapter-num">01</span>
+    <h2 class="chapter-title" style="margin:0">Configurando o Ambiente</h2>
+  </div>
+
+  <h2>JDK, JRE e JVM</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Sigla</th><th>Nome</th><th>Para que serve</th></tr>
+    <tr><td>JVM</td><td>Java Virtual Machine</td><td>Executa o bytecode. Responsável pelo WORA.</td></tr>
+    <tr><td>JRE</td><td>Java Runtime Environment</td><td>JVM + bibliotecas. Só para <em>rodar</em> apps.</td></tr>
+    <tr><td>JDK</td><td>Java Development Kit</td><td>JRE + compilador javac. Você precisa disso.</td></tr>
+  </table></div>
+
+  <h2>Instalando o JDK 21</h2>
+  <h3>Windows</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">CMD</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm"># Baixe o JDK 21 em: https://adoptium.net
+# Execute o .msi e marque "Set JAVA_HOME variable"
+# Depois verifique:</span>
+java <span class="op">-version</span>
+javac <span class="op">-version</span></pre>
+  </div>
+
+  <h3>macOS</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre>brew install <span class="op">--cask</span> temurin
+java <span class="op">-version</span></pre>
+  </div>
+
+  <h3>Linux (Ubuntu/Debian)</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre>sudo apt update <span class="op">&&</span> sudo apt install openjdk<span class="op">-</span><span class="nm">21</span><span class="op">-</span>jdk <span class="op">-y</span>
+java <span class="op">-version</span></pre>
+  </div>
+
+  <h2>Hello World</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public class</span> <span class="tp">HelloWorld</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="tp">String</span>[] args) {
+        <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"Olá, mundo!"</span>);
+    }
+}</pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">💡 IDE Recomendada</div>
+    <p>Use o <strong>IntelliJ IDEA Community</strong> (gratuito) em <a href="https://jetbrains.com/idea/download" style="color:var(--accent)">jetbrains.com</a>. É a IDE mais usada por profissionais Java e tem suporte nativo ao Spring Boot.</p>
+  </div>
+</section>
+
+<!-- CAP 02 -->
+<section class="chapter" id="cap02">
+  <div class="chapter-header"><span class="chapter-num">02</span><h2 class="chapter-title" style="margin:0">Tipos e Variáveis</h2></div>
+
+  <h2>Tipos Primitivos</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Tipo</th><th>Tamanho</th><th>Faixa / Uso</th><th>Exemplo</th></tr>
+    <tr><td>byte</td><td>8 bits</td><td>-128 a 127</td><td><code>byte b = 100;</code></td></tr>
+    <tr><td>short</td><td>16 bits</td><td>-32.768 a 32.767</td><td><code>short s = 1000;</code></td></tr>
+    <tr><td>int</td><td>32 bits</td><td>±2 bilhões (mais usado)</td><td><code>int i = 42;</code></td></tr>
+    <tr><td>long</td><td>64 bits</td><td>Números muito grandes</td><td><code>long l = 9L;</code></td></tr>
+    <tr><td>float</td><td>32 bits</td><td>Decimal com menos precisão</td><td><code>float f = 3.14f;</code></td></tr>
+    <tr><td>double</td><td>64 bits</td><td>Decimal (mais usado)</td><td><code>double d = 3.14;</code></td></tr>
+    <tr><td>char</td><td>16 bits</td><td>Um caractere Unicode</td><td><code>char c = 'A';</code></td></tr>
+    <tr><td>boolean</td><td>1 bit</td><td>true ou false</td><td><code>boolean ok = true;</code></td></tr>
+  </table></div>
+
+  <h2>Strings</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="tp">String</span> nome = <span class="st">"Maria"</span>;
+<span class="tp">String</span> msg = <span class="st">"Olá, %s! Você tem %d anos."</span>.<span class="fn">formatted</span>(nome, <span class="nm">25</span>);
+
+nome.<span class="fn">length</span>()           <span class="cm">// 5</span>
+nome.<span class="fn">toUpperCase</span>()      <span class="cm">// MARIA</span>
+nome.<span class="fn">contains</span>(<span class="st">"ar"</span>)    <span class="cm">// true</span>
+nome.<span class="fn">replace</span>(<span class="st">"a"</span>, <span class="st">"@"</span>) <span class="cm">// M@ri@</span>
+nome.<span class="fn">substring</span>(<span class="nm">0</span>, <span class="nm">3</span>)  <span class="cm">// Mar</span>
+<span class="st">"  oi  "</span>.<span class="fn">trim</span>()        <span class="cm">// oi</span>
+nome.<span class="fn">startsWith</span>(<span class="st">"Ma"</span>)  <span class="cm">// true</span>
+nome.<span class="fn">charAt</span>(<span class="nm">0</span>)         <span class="cm">// M</span>
+
+<span class="cm">// NUNCA use == para comparar Strings!</span>
+a.<span class="fn">equals</span>(b)             <span class="cm">// ✅ correto — compara conteúdo</span>
+a == b                   <span class="cm">// ❌ errado — compara referência</span></pre>
+  </div>
+
+  <h2>Var (inferência de tipo)</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA 10+</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// var inferir o tipo automaticamente</span>
+<span class="kw">var</span> nome = <span class="st">"Ana"</span>;     <span class="cm">// String</span>
+<span class="kw">var</span> idade = <span class="nm">30</span>;       <span class="cm">// int</span>
+<span class="kw">var</span> lista = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;<span class="tp">String</span>&gt;(); <span class="cm">// ArrayList&lt;String&gt;</span></pre>
+  </div>
+</section>
+
+<!-- CAP 03 -->
+<section class="chapter" id="cap03">
+  <div class="chapter-header"><span class="chapter-num">03</span><h2 class="chapter-title" style="margin:0">Controle e Loops</h2></div>
+
+  <h2>if / else / ternário</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">int</span> nota = <span class="nm">75</span>;
+<span class="kw">if</span> (nota >= <span class="nm">90</span>)      <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"Excelente"</span>);
+<span class="kw">else if</span> (nota >= <span class="nm">70</span>) <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"Aprovado"</span>);
+<span class="kw">else</span>                  <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"Reprovado"</span>);
+
+<span class="cm">// Operador ternário</span>
+<span class="tp">String</span> status = nota >= <span class="nm">70</span> ? <span class="st">"Aprovado"</span> : <span class="st">"Reprovado"</span>;</pre>
+  </div>
+
+  <h2>Switch Expression</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA 14+</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="tp">String</span> dia = <span class="kw">switch</span> (diaSemana) {
+    <span class="kw">case</span> <span class="nm">1</span> -> <span class="st">"Domingo"</span>;
+    <span class="kw">case</span> <span class="nm">2</span> -> <span class="st">"Segunda"</span>;
+    <span class="kw">case</span> <span class="nm">3</span> -> <span class="st">"Terça"</span>;
+    <span class="kw">default</span> -> <span class="st">"Outro"</span>;
+};</pre>
+  </div>
+
+  <h2>Loops</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// for clássico</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i < <span class="nm">5</span>; i++) { <span class="tp">System</span>.out.<span class="fn">println</span>(i); }
+
+<span class="cm">// for-each (coleções)</span>
+<span class="kw">for</span> (<span class="tp">String</span> nome : nomes) { <span class="tp">System</span>.out.<span class="fn">println</span>(nome); }
+
+<span class="cm">// while</span>
+<span class="kw">while</span> (condicao) { <span class="cm">/* executa enquanto verdadeiro */</span> }
+
+<span class="cm">// do-while — executa pelo menos 1 vez</span>
+<span class="kw">do</span> { tentativas++; } <span class="kw">while</span> (tentativas < <span class="nm">3</span>);</pre>
+  </div>
+</section>
+
+<!-- CAP 04 -->
+<section class="chapter" id="cap04">
+  <div class="chapter-header"><span class="chapter-num">04</span><h2 class="chapter-title" style="margin:0">Métodos</h2></div>
+
+  <h2>Definindo e Chamando Métodos</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public class</span> <span class="tp">Calculadora</span> {
+
+    <span class="cm">// Método com retorno</span>
+    <span class="kw">public static double</span> <span class="fn">somar</span>(<span class="kw">double</span> a, <span class="kw">double</span> b) {
+        <span class="kw">return</span> a + b;
+    }
+
+    <span class="cm">// Método sem retorno (void)</span>
+    <span class="kw">public static void</span> <span class="fn">imprimir</span>(<span class="tp">String</span> msg) {
+        <span class="tp">System</span>.out.<span class="fn">println</span>(msg);
+    }
+
+    <span class="cm">// Sobrecarga (overload) — mesmo nome, parâmetros diferentes</span>
+    <span class="kw">public static int</span> <span class="fn">somar</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { <span class="kw">return</span> a + b; }
+
+    <span class="cm">// Varargs — número variável de argumentos</span>
+    <span class="kw">public static int</span> <span class="fn">somarTodos</span>(<span class="kw">int</span>... nums) {
+        <span class="kw">int</span> total = <span class="nm">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> n : nums) total += n;
+        <span class="kw">return</span> total;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="tp">String</span>[] args) {
+        <span class="fn">imprimir</span>(<span class="st">"Soma: "</span> + <span class="fn">somar</span>(<span class="nm">3.0</span>, <span class="nm">4.0</span>));   <span class="cm">// 7.0</span>
+        <span class="fn">imprimir</span>(<span class="st">"Total: "</span> + <span class="fn">somarTodos</span>(<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>)); <span class="cm">// 15</span>
+    }
+}</pre>
+  </div>
+</section>
+
+<!-- CAP 05 -->
+<section class="chapter" id="cap05">
+  <div class="chapter-header"><span class="chapter-num">05</span><h2 class="chapter-title" style="margin:0">Classes e Objetos</h2></div>
+
+  <p>Uma <strong>classe</strong> é um molde. Um <strong>objeto</strong> é uma instância criada a partir desse molde. Cada objeto tem seu próprio estado (atributos) e comportamento (métodos).</p>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public class</span> <span class="tp">Conta</span> {
+    <span class="cm">// Atributos — private = encapsulamento</span>
+    <span class="kw">private</span> <span class="tp">String</span> titular;
+    <span class="kw">private double</span> saldo;
+
+    <span class="cm">// Construtor</span>
+    <span class="kw">public</span> <span class="fn">Conta</span>(<span class="tp">String</span> titular, <span class="kw">double</span> saldoInicial) {
+        <span class="kw">this</span>.titular = titular;
+        <span class="kw">this</span>.saldo = saldoInicial;
+    }
+
+    <span class="cm">// Getters</span>
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getTitular</span>() { <span class="kw">return</span> titular; }
+    <span class="kw">public double</span> <span class="fn">getSaldo</span>()   { <span class="kw">return</span> saldo;   }
+
+    <span class="cm">// Métodos de negócio</span>
+    <span class="kw">public void</span> <span class="fn">depositar</span>(<span class="kw">double</span> valor) {
+        <span class="kw">if</span> (valor <= <span class="nm">0</span>) <span class="kw">throw new</span> <span class="tp">IllegalArgumentException</span>(<span class="st">"Valor inválido"</span>);
+        saldo += valor;
+    }
+
+    <span class="kw">public void</span> <span class="fn">sacar</span>(<span class="kw">double</span> valor) {
+        <span class="kw">if</span> (valor > saldo) <span class="kw">throw new</span> <span class="tp">RuntimeException</span>(<span class="st">"Saldo insuficiente"</span>);
+        saldo -= valor;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">toString</span>() {
+        <span class="kw">return</span> <span class="st">"Conta{titular='%s', saldo=R$%.2f}"</span>.<span class="fn">formatted</span>(titular, saldo);
+    }
+}
+
+<span class="cm">// Uso</span>
+<span class="tp">Conta</span> c = <span class="kw">new</span> <span class="tp">Conta</span>(<span class="st">"Ana"</span>, <span class="nm">1000.0</span>);
+c.<span class="fn">depositar</span>(<span class="nm">500</span>);
+c.<span class="fn">sacar</span>(<span class="nm">200</span>);
+<span class="tp">System</span>.out.<span class="fn">println</span>(c); <span class="cm">// Conta{titular='Ana', saldo=R$1300,00}</span></pre>
+  </div>
+</section>
+
+<!-- CAP 06 -->
+<section class="chapter" id="cap06">
+  <div class="chapter-header"><span class="chapter-num">06</span><h2 class="chapter-title" style="margin:0">Herança e Polimorfismo</h2></div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public class</span> <span class="tp">Animal</span> {
+    <span class="kw">protected</span> <span class="tp">String</span> nome;
+    <span class="kw">public</span> <span class="fn">Animal</span>(<span class="tp">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+    <span class="kw">public void</span> <span class="fn">emitirSom</span>() { <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"..."</span>); }
+}
+
+<span class="kw">public class</span> <span class="tp">Cachorro</span> <span class="kw">extends</span> <span class="tp">Animal</span> {
+    <span class="kw">public</span> <span class="fn">Cachorro</span>(<span class="tp">String</span> nome) { <span class="kw">super</span>(nome); }
+
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> <span class="fn">emitirSom</span>() { <span class="tp">System</span>.out.<span class="fn">println</span>(nome + <span class="st">": Au au!"</span>); }
+}
+
+<span class="cm">// Polimorfismo — lista de Animal com tipos diferentes</span>
+<span class="tp">List</span>&lt;<span class="tp">Animal</span>&gt; animais = <span class="tp">List</span>.<span class="fn">of</span>(
+    <span class="kw">new</span> <span class="tp">Cachorro</span>(<span class="st">"Rex"</span>),
+    <span class="kw">new</span> <span class="tp">Gato</span>(<span class="st">"Mimi"</span>)
+);
+
+<span class="cm">// Cada um chama SUA versão do método</span>
+animais.<span class="fn">forEach</span>(<span class="tp">Animal</span>::emitirSom);
+
+<span class="cm">// instanceof e pattern matching (Java 16+)</span>
+<span class="kw">if</span> (animal <span class="kw">instanceof</span> <span class="tp">Cachorro</span> c) {
+    c.<span class="fn">buscarBola</span>(); <span class="cm">// já castado, sem (Cachorro) manual</span>
+}</pre>
+  </div>
+</section>
+
+<!-- CAP 07 -->
+<section class="chapter" id="cap07">
+  <div class="chapter-header"><span class="chapter-num">07</span><h2 class="chapter-title" style="margin:0">Interfaces e Classes Abstratas</h2></div>
+
+  <div class="table-wrap"><table>
+    <tr><th>Característica</th><th>Interface</th><th>Classe Abstrata</th></tr>
+    <tr><td>Instanciável</td><td>Não</td><td>Não</td></tr>
+    <tr><td>Herança múltipla</td><td>✅ Sim</td><td>❌ Não</td></tr>
+    <tr><td>Métodos concretos</td><td>default / static</td><td>Sim</td></tr>
+    <tr><td>Construtores</td><td>Não</td><td>Sim</td></tr>
+    <tr><td>Quando usar</td><td>Contrato / capacidade</td><td>Base comum compartilhada</td></tr>
+  </table></div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public interface</span> <span class="tp">Pagavel</span> {
+    <span class="kw">double</span> <span class="fn">calcularPagamento</span>();  <span class="cm">// abstrato</span>
+
+    <span class="kw">default</span> <span class="tp">String</span> <span class="fn">formatarPagamento</span>() {  <span class="cm">// concreto</span>
+        <span class="kw">return</span> <span class="st">"R$ %.2f"</span>.<span class="fn">formatted</span>(<span class="fn">calcularPagamento</span>());
+    }
+}
+
+<span class="kw">public abstract class</span> <span class="tp">Funcionario</span> <span class="kw">implements</span> <span class="tp">Pagavel</span> {
+    <span class="kw">protected</span> <span class="tp">String</span> nome;
+    <span class="kw">public</span> <span class="fn">Funcionario</span>(<span class="tp">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+    <span class="kw">public abstract double</span> <span class="fn">calcularPagamento</span>();
+}
+
+<span class="kw">public class</span> <span class="tp">Horista</span> <span class="kw">extends</span> <span class="tp">Funcionario</span> {
+    <span class="kw">private double</span> horasTrabalhadas, valorHora;
+    <span class="kw">public</span> <span class="fn">Horista</span>(<span class="tp">String</span> n, <span class="kw">double</span> h, <span class="kw">double</span> v) {
+        <span class="kw">super</span>(n); horasTrabalhadas=h; valorHora=v;
+    }
+    <span class="an">@Override</span>
+    <span class="kw">public double</span> <span class="fn">calcularPagamento</span>() { <span class="kw">return</span> horasTrabalhadas * valorHora; }
+}</pre>
+  </div>
+</section>
+
+<!-- CAP 08 -->
+<section class="chapter" id="cap08">
+  <div class="chapter-header"><span class="chapter-num">08</span><h2 class="chapter-title" style="margin:0">Records e Enums <span class="version">Java 16+</span></h2></div>
+
+  <h2>Records — Classes de Dados Imutáveis</h2>
+  <p>Records eliminam o boilerplate de classes que só carregam dados (getters, equals, hashCode, toString são gerados automaticamente).</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA 16+</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// Antes: classe com 50 linhas de boilerplate</span>
+<span class="cm">// Agora, com record:</span>
+<span class="kw">public record</span> <span class="tp">Produto</span>(<span class="tp">String</span> nome, <span class="kw">double</span> preco, <span class="kw">int</span> estoque) {}
+
+<span class="cm">// Uso</span>
+<span class="tp">Produto</span> p = <span class="kw">new</span> <span class="tp">Produto</span>(<span class="st">"Café"</span>, <span class="nm">29.90</span>, <span class="nm">100</span>);
+p.<span class="fn">nome</span>();    <span class="cm">// "Café"  — getter gerado automaticamente</span>
+p.<span class="fn">preco</span>();   <span class="cm">// 29.90</span>
+p.<span class="fn">toString</span>(); <span class="cm">// Produto[nome=Café, preco=29.9, estoque=100]</span>
+
+<span class="cm">// Records são imutáveis — não têm setters</span></pre>
+  </div>
+
+  <h2>Enums</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public enum</span> <span class="tp">Status</span> {
+    ATIVO(<span class="st">"Ativo"</span>), INATIVO(<span class="st">"Inativo"</span>), PENDENTE(<span class="st">"Pendente"</span>);
+
+    <span class="kw">private final</span> <span class="tp">String</span> descricao;
+    <span class="tp">Status</span>(<span class="tp">String</span> d) { <span class="kw">this</span>.descricao = d; }
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getDescricao</span>() { <span class="kw">return</span> descricao; }
+}
+
+<span class="cm">// Uso</span>
+<span class="tp">Status</span> s = <span class="tp">Status</span>.ATIVO;
+<span class="tp">System</span>.out.<span class="fn">println</span>(s.<span class="fn">getDescricao</span>()); <span class="cm">// Ativo</span>
+
+<span class="cm">// Switch com enum</span>
+<span class="kw">String</span> msg = <span class="kw">switch</span> (s) {
+    <span class="kw">case</span> ATIVO    -> <span class="st">"✅ Tudo certo"</span>;
+    <span class="kw">case</span> INATIVO  -> <span class="st">"❌ Desativado"</span>;
+    <span class="kw">case</span> PENDENTE -> <span class="st">"⏳ Aguardando"</span>;
+};</pre>
+  </div>
+</section>
+
+<!-- CAP 09 -->
+<section class="chapter" id="cap09">
+  <div class="chapter-header"><span class="chapter-num">09</span><h2 class="chapter-title" style="margin:0">Coleções e Generics</h2></div>
+
+  <div class="table-wrap"><table>
+    <tr><th>Estrutura</th><th>Quando usar</th><th>Característica</th></tr>
+    <tr><td>ArrayList</td><td>Lista com acesso por índice</td><td>Rápido para leitura</td></tr>
+    <tr><td>LinkedList</td><td>Inserção/remoção frequentes</td><td>Rápido para escrever</td></tr>
+    <tr><td>HashSet</td><td>Sem duplicatas, sem ordem</td><td>Busca O(1)</td></tr>
+    <tr><td>TreeSet</td><td>Sem duplicatas, com ordem</td><td>Ordenado naturalmente</td></tr>
+    <tr><td>HashMap</td><td>Chave → Valor</td><td>Busca O(1) pela chave</td></tr>
+    <tr><td>LinkedHashMap</td><td>Chave → Valor com ordem de inserção</td><td>Mantém ordem</td></tr>
+    <tr><td>TreeMap</td><td>Chave → Valor ordenado</td><td>Ordenado pela chave</td></tr>
+  </table></div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// List — ordem garantida, permite duplicatas</span>
+<span class="tp">List</span>&lt;<span class="tp">String</span>&gt; frutas = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;&gt;();
+frutas.<span class="fn">add</span>(<span class="st">"Maçã"</span>); frutas.<span class="fn">add</span>(<span class="st">"Banana"</span>); frutas.<span class="fn">add</span>(<span class="st">"Maçã"</span>);
+<span class="cm">// [Maçã, Banana, Maçã] — duplicata permitida</span>
+
+<span class="cm">// Set — sem duplicatas</span>
+<span class="tp">Set</span>&lt;<span class="tp">String</span>&gt; unicas = <span class="kw">new</span> <span class="tp">HashSet</span>&lt;&gt;(frutas);
+<span class="cm">// {Maçã, Banana} — duplicata removida</span>
+
+<span class="cm">// Map — chave → valor</span>
+<span class="tp">Map</span>&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; notas = <span class="kw">new</span> <span class="tp">HashMap</span>&lt;&gt;();
+notas.<span class="fn">put</span>(<span class="st">"Ana"</span>, <span class="nm">9</span>);
+notas.<span class="fn">put</span>(<span class="st">"Bob"</span>, <span class="nm">7</span>);
+notas.<span class="fn">getOrDefault</span>(<span class="st">"Carlos"</span>, <span class="nm">0</span>); <span class="cm">// 0</span>
+notas.<span class="fn">forEach</span>((nome, nota) -> <span class="tp">System</span>.out.<span class="fn">println</span>(nome + <span class="st">": "</span> + nota));
+
+<span class="cm">// Listas imutáveis (Java 9+)</span>
+<span class="tp">List</span>&lt;<span class="tp">String</span>&gt; imutavel = <span class="tp">List</span>.<span class="fn">of</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>);
+<span class="tp">Map</span>&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; imutavelMap = <span class="tp">Map</span>.<span class="fn">of</span>(<span class="st">"a"</span>, <span class="nm">1</span>, <span class="st">"b"</span>, <span class="nm">2</span>);</pre>
+  </div>
+</section>
+
+<!-- CAP 10 -->
+<section class="chapter" id="cap10">
+  <div class="chapter-header"><span class="chapter-num">10</span><h2 class="chapter-title" style="margin:0">Streams e Lambdas</h2></div>
+
+  <p>Lambdas são funções anônimas. Streams são pipelines de processamento de dados. Juntos, são a base do Java funcional moderno.</p>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="tp">List</span>&lt;<span class="tp">Integer</span>&gt; nums = <span class="tp">List</span>.<span class="fn">of</span>(<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>,<span class="nm">6</span>,<span class="nm">7</span>,<span class="nm">8</span>,<span class="nm">9</span>,<span class="nm">10</span>);
+
+<span class="cm">// filter → map → collect</span>
+<span class="tp">List</span>&lt;<span class="tp">Integer</span>&gt; pares = nums.<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(n -> n % <span class="nm">2</span> == <span class="nm">0</span>)     <span class="cm">// [2,4,6,8,10]</span>
+    .<span class="fn">map</span>(n -> n * n)              <span class="cm">// [4,16,36,64,100]</span>
+    .<span class="fn">collect</span>(<span class="tp">Collectors</span>.<span class="fn">toList</span>());
+
+<span class="cm">// reduce — agrega</span>
+<span class="kw">int</span> soma = nums.<span class="fn">stream</span>().<span class="fn">reduce</span>(<span class="nm">0</span>, <span class="tp">Integer</span>::sum); <span class="cm">// 55</span>
+
+<span class="cm">// Estatísticas</span>
+<span class="tp">IntSummaryStatistics</span> stats = nums.<span class="fn">stream</span>()
+    .<span class="fn">mapToInt</span>(<span class="tp">Integer</span>::intValue)
+    .<span class="fn">summaryStatistics</span>();
+stats.<span class="fn">getAverage</span>(); <span class="cm">// 5.5</span>
+stats.<span class="fn">getMax</span>();     <span class="cm">// 10</span>
+
+<span class="cm">// groupingBy — agrupa por critério</span>
+<span class="tp">Map</span>&lt;<span class="tp">String</span>, <span class="tp">List</span>&lt;<span class="tp">Produto</span>&gt;&gt; porCategoria = produtos.<span class="fn">stream</span>()
+    .<span class="fn">collect</span>(<span class="tp">Collectors</span>.<span class="fn">groupingBy</span>(<span class="tp">Produto</span>::getCategoria));
+
+<span class="cm">// findFirst com Optional</span>
+<span class="tp">Optional</span>&lt;<span class="tp">String</span>&gt; primeiro = nomes.<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(n -> n.<span class="fn">startsWith</span>(<span class="st">"A"</span>))
+    .<span class="fn">findFirst</span>();
+primeiro.<span class="fn">ifPresent</span>(<span class="tp">System</span>.out::println);
+
+<span class="cm">// Method references</span>
+nomes.<span class="fn">forEach</span>(<span class="tp">System</span>.out::println);  <span class="cm">// equivalente a n -> System.out.println(n)</span></pre>
+  </div>
+</section>
+
+<!-- CAP 11 -->
+<section class="chapter" id="cap11">
+  <div class="chapter-header"><span class="chapter-num">11</span><h2 class="chapter-title" style="margin:0">Exceções</h2></div>
+
+  <div class="table-wrap"><table>
+    <tr><th>Tipo</th><th>Exemplo</th><th>Obrigatório tratar?</th></tr>
+    <tr><td>Checked</td><td>IOException, SQLException</td><td>✅ Sim — try/catch ou throws</td></tr>
+    <tr><td>Unchecked (Runtime)</td><td>NullPointerException, IllegalArgumentException</td><td>❌ Não obrigatório</td></tr>
+    <tr><td>Error</td><td>OutOfMemoryError, StackOverflowError</td><td>Não trate — problema grave da JVM</td></tr>
+  </table></div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// Exceção customizada</span>
+<span class="kw">public class</span> <span class="tp">RegraDeNegocioException</span> <span class="kw">extends</span> <span class="tp">RuntimeException</span> {
+    <span class="kw">public</span> <span class="fn">RegraDeNegocioException</span>(<span class="tp">String</span> msg) { <span class="kw">super</span>(msg); }
+}
+
+<span class="cm">// try-with-resources — fecha recurso automaticamente</span>
+<span class="kw">try</span> (<span class="tp">Connection</span> conn = <span class="fn">getConnection</span>();
+     <span class="tp">PreparedStatement</span> ps = conn.<span class="fn">prepareStatement</span>(sql)) {
+    <span class="cm">// conn e ps fechados automaticamente ao sair do bloco</span>
+} <span class="kw">catch</span> (<span class="tp">SQLException</span> e) {
+    <span class="kw">throw new</span> <span class="tp">RuntimeException</span>(<span class="st">"Erro no banco"</span>, e); <span class="cm">// wrapping</span>
+} <span class="kw">finally</span> {
+    <span class="cm">// sempre executa</span>
+}
+
+<span class="cm">// Multi-catch</span>
+<span class="kw">catch</span> (<span class="tp">IOException</span> | <span class="tp">SQLException</span> e) { <span class="cm">/* trata ambos */</span> }</pre>
+  </div>
+</section>
+
+<!-- CAP 12 -->
+<section class="chapter" id="cap12">
+  <div class="chapter-header"><span class="chapter-num">12</span><h2 class="chapter-title" style="margin:0">Optional <span class="version">Java 8+</span></h2></div>
+
+  <p><code>Optional</code> é um container que pode ou não conter um valor. Substitui o famoso <code>null</code> e evita NullPointerException.</p>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// Criando Optionals</span>
+<span class="tp">Optional</span>&lt;<span class="tp">String</span>&gt; com    = <span class="tp">Optional</span>.<span class="fn">of</span>(<span class="st">"Java"</span>);
+<span class="tp">Optional</span>&lt;<span class="tp">String</span>&gt; vazio  = <span class="tp">Optional</span>.<span class="fn">empty</span>();
+<span class="tp">Optional</span>&lt;<span class="tp">String</span>&gt; talvez = <span class="tp">Optional</span>.<span class="fn">ofNullable</span>(podeSernull);
+
+<span class="cm">// Verificando e extraindo</span>
+com.<span class="fn">isPresent</span>()   <span class="cm">// true</span>
+com.<span class="fn">get</span>()         <span class="cm">// "Java"</span>
+com.<span class="fn">orElse</span>(<span class="st">"X"</span>)  <span class="cm">// "Java" (ou "X" se vazio)</span>
+
+<span class="cm">// Padrão recomendado</span>
+<span class="tp">Optional</span>&lt;<span class="tp">Usuario</span>&gt; usuario = repository.<span class="fn">findById</span>(id);
+usuario
+    .<span class="fn">map</span>(<span class="tp">Usuario</span>::getNome)
+    .<span class="fn">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">RuntimeException</span>(<span class="st">"Usuário não encontrado"</span>));
+
+<span class="cm">// Com ifPresent</span>
+usuario.<span class="fn">ifPresent</span>(u -> <span class="tp">System</span>.out.<span class="fn">println</span>(u.<span class="fn">getNome</span>()));</pre>
+  </div>
+</section>
+
+<!-- CAP 13 -->
+<section class="chapter" id="cap13">
+  <div class="chapter-header"><span class="chapter-num">13</span><h2 class="chapter-title" style="margin:0">Arquivos e I/O</h2></div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">import</span> java.nio.file.*;
+
+<span class="cm">// Escrever arquivo (Java NIO — moderno)</span>
+<span class="tp">Path</span> arquivo = <span class="tp">Path</span>.<span class="fn">of</span>(<span class="st">"dados.txt"</span>);
+<span class="tp">Files</span>.<span class="fn">writeString</span>(arquivo, <span class="st">"Conteúdo do arquivo"</span>);
+
+<span class="cm">// Ler arquivo completo</span>
+<span class="tp">String</span> conteudo = <span class="tp">Files</span>.<span class="fn">readString</span>(arquivo);
+
+<span class="cm">// Ler linha por linha</span>
+<span class="tp">Files</span>.<span class="fn">lines</span>(arquivo)
+    .<span class="fn">filter</span>(linha -> !linha.<span class="fn">isBlank</span>())
+    .<span class="fn">forEach</span>(<span class="tp">System</span>.out::println);
+
+<span class="cm">// Listar arquivos de um diretório</span>
+<span class="tp">Files</span>.<span class="fn">list</span>(<span class="tp">Path</span>.<span class="fn">of</span>(<span class="st">"."</span>))
+    .<span class="fn">filter</span>(<span class="tp">Files</span>::isRegularFile)
+    .<span class="fn">forEach</span>(<span class="tp">System</span>.out::println);
+
+<span class="cm">// Verificar existência</span>
+<span class="tp">Files</span>.<span class="fn">exists</span>(arquivo);
+<span class="tp">Files</span>.<span class="fn">delete</span>(arquivo);
+<span class="tp">Files</span>.<span class="fn">copy</span>(origem, destino);</pre>
+  </div>
+</section>
+
+<!-- CAP 14 -->
+<section class="chapter" id="cap14">
+  <div class="chapter-header"><span class="chapter-num">14</span><h2 class="chapter-title" style="margin:0">Threads e Concorrência</h2></div>
+
+  <p>Concorrência permite executar múltiplas tarefas simultaneamente. Java tem suporte nativo a threads e um rico ecossistema de concorrência.</p>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// 1. Runnable — forma recomendada</span>
+<span class="tp">Runnable</span> tarefa = () -> {
+    <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"Thread: "</span> + <span class="tp">Thread</span>.<span class="fn">currentThread</span>().<span class="fn">getName</span>());
+};
+<span class="kw">new</span> <span class="tp">Thread</span>(tarefa).<span class="fn">start</span>();
+
+<span class="cm">// 2. ExecutorService — mais profissional</span>
+<span class="tp">ExecutorService</span> executor = <span class="tp">Executors</span>.<span class="fn">newFixedThreadPool</span>(<span class="nm">4</span>);
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i < <span class="nm">10</span>; i++) {
+    <span class="kw">final int</span> num = i;
+    executor.<span class="fn">submit</span>(() -> <span class="fn">processarItem</span>(num));
+}
+executor.<span class="fn">shutdown</span>();
+
+<span class="cm">// 3. CompletableFuture — assíncrono moderno</span>
+<span class="tp">CompletableFuture</span>&lt;<span class="tp">String</span>&gt; futuro = <span class="tp">CompletableFuture</span>
+    .<span class="fn">supplyAsync</span>(() -> <span class="fn">buscarDadosExternos</span>())
+    .<span class="fn">thenApply</span>(<span class="tp">String</span>::toUpperCase)
+    .<span class="fn">exceptionally</span>(e -> <span class="st">"Erro: "</span> + e.<span class="fn">getMessage</span>());
+
+<span class="tp">String</span> resultado = futuro.<span class="fn">get</span>(); <span class="cm">// aguarda resultado</span>
+
+<span class="cm">// 4. synchronized — evita condição de corrida</span>
+<span class="kw">public synchronized void</span> <span class="fn">incrementar</span>() {
+    contador++; <span class="cm">// thread-safe</span>
+}
+
+<span class="cm">// 5. AtomicInteger — alternativa mais eficiente</span>
+<span class="tp">AtomicInteger</span> contador = <span class="kw">new</span> <span class="tp">AtomicInteger</span>(<span class="nm">0</span>);
+contador.<span class="fn">incrementAndGet</span>(); <span class="cm">// thread-safe sem synchronized</span></pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ Cuidado com Race Conditions</div>
+    <p>Quando múltiplas threads acessam dados compartilhados sem sincronização, ocorrem race conditions — resultados imprevisíveis. Use <code>synchronized</code>, <code>AtomicXxx</code>, ou estruturas thread-safe como <code>ConcurrentHashMap</code>.</p>
+  </div>
+</section>
+
+<!-- CAP 15 -->
+<section class="chapter" id="cap15">
+  <div class="chapter-header"><span class="chapter-num">15</span><h2 class="chapter-title" style="margin:0">Banco de Dados com JDBC</h2></div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// pom.xml</span>
+&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;<span class="nm">8.0.33</span>&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA — CRUD COMPLETO</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public class</span> <span class="tp">PessoaDAO</span> {
+    <span class="kw">private static final</span> <span class="tp">String</span> URL = <span class="st">"jdbc:mysql://localhost/db"</span>;
+
+    <span class="cm">// INSERT</span>
+    <span class="kw">public void</span> <span class="fn">inserir</span>(<span class="tp">String</span> nome, <span class="kw">int</span> idade) <span class="kw">throws</span> <span class="tp">SQLException</span> {
+        <span class="kw">var</span> sql = <span class="st">"INSERT INTO pessoas (nome, idade) VALUES (?, ?)"</span>;
+        <span class="kw">try</span> (<span class="kw">var</span> conn = <span class="tp">DriverManager</span>.<span class="fn">getConnection</span>(URL, <span class="st">"root"</span>, <span class="st">"senha"</span>);
+             <span class="kw">var</span> ps = conn.<span class="fn">prepareStatement</span>(sql)) {
+            ps.<span class="fn">setString</span>(<span class="nm">1</span>, nome);
+            ps.<span class="fn">setInt</span>(<span class="nm">2</span>, idade);
+            ps.<span class="fn">executeUpdate</span>();
+        }
+    }
+
+    <span class="cm">// SELECT</span>
+    <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">Pessoa</span>&gt; <span class="fn">listar</span>() <span class="kw">throws</span> <span class="tp">SQLException</span> {
+        <span class="kw">var</span> lista = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;<span class="tp">Pessoa</span>&gt;();
+        <span class="kw">try</span> (<span class="kw">var</span> conn = <span class="tp">DriverManager</span>.<span class="fn">getConnection</span>(URL, <span class="st">"root"</span>, <span class="st">"senha"</span>);
+             <span class="kw">var</span> rs = conn.<span class="fn">createStatement</span>().<span class="fn">executeQuery</span>(<span class="st">"SELECT * FROM pessoas"</span>)) {
+            <span class="kw">while</span> (rs.<span class="fn">next</span>()) {
+                lista.<span class="fn">add</span>(<span class="kw">new</span> <span class="tp">Pessoa</span>(rs.<span class="fn">getInt</span>(<span class="st">"id"</span>), rs.<span class="fn">getString</span>(<span class="st">"nome"</span>)));
+            }
+        }
+        <span class="kw">return</span> lista;
+    }
+}</pre>
+  </div>
+
+  <div class="callout danger">
+    <div class="callout-title">🔒 SQL Injection — NUNCA concatene SQL com dados do usuário!</div>
+    <p>Use <strong>sempre</strong> <code>PreparedStatement</code> com <code>?</code>. Nunca faça <code>"SELECT * FROM users WHERE nome = '" + nome + "'"</code> — isso é uma vulnerabilidade gravíssima.</p>
+  </div>
+</section>
+
+<!-- CAP 16 -->
+<section class="chapter" id="cap16">
+  <div class="chapter-header"><span class="chapter-num">16</span><h2 class="chapter-title" style="margin:0">Spring Boot</h2></div>
+
+  <h2>Estrutura de um Projeto</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">ESTRUTURA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre>src/main/java/com/exemplo/
+├── <span class="fn">MinhaApiApplication.java</span>  <span class="cm">← @SpringBootApplication</span>
+├── controller/                <span class="cm">← HTTP (entrada)</span>
+├── service/                   <span class="cm">← Regras de negócio</span>
+├── repository/                <span class="cm">← Banco de dados</span>
+├── model/                     <span class="cm">← Entidades JPA</span>
+└── dto/                       <span class="cm">← Objetos de transferência</span></pre>
+  </div>
+
+  <h2>Entidade JPA</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="an">@Entity</span>
+<span class="an">@Table</span>(name = <span class="st">"produtos"</span>)
+<span class="kw">public class</span> <span class="tp">Produto</span> {
+    <span class="an">@Id</span>
+    <span class="an">@GeneratedValue</span>(strategy = <span class="tp">GenerationType</span>.IDENTITY)
+    <span class="kw">private</span> <span class="tp">Long</span> id;
+
+    <span class="an">@Column</span>(nullable = <span class="kw">false</span>, length = <span class="nm">100</span>)
+    <span class="kw">private</span> <span class="tp">String</span> nome;
+
+    <span class="an">@Column</span>(nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="tp">BigDecimal</span> preco;
+
+    <span class="an">@ManyToOne</span>
+    <span class="an">@JoinColumn</span>(name = <span class="st">"categoria_id"</span>)
+    <span class="kw">private</span> <span class="tp">Categoria</span> categoria;
+}</pre>
+  </div>
+
+  <h2>Repository com Spring Data</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// JpaRepository já tem: save, findById, findAll, delete, count...</span>
+<span class="kw">public interface</span> <span class="tp">ProdutoRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;<span class="tp">Produto</span>, <span class="tp">Long</span>&gt; {
+
+    <span class="cm">// Spring gera o SQL pelo nome do método!</span>
+    <span class="tp">List</span>&lt;<span class="tp">Produto</span>&gt; <span class="fn">findByNomeContainingIgnoreCase</span>(<span class="tp">String</span> nome);
+    <span class="tp">List</span>&lt;<span class="tp">Produto</span>&gt; <span class="fn">findByCategoriaAndPrecoLessThan</span>(<span class="tp">Categoria</span> cat, <span class="tp">BigDecimal</span> preco);
+
+    <span class="an">@Query</span>(<span class="st">"SELECT p FROM Produto p WHERE p.estoque > 0 ORDER BY p.preco"</span>)
+    <span class="tp">List</span>&lt;<span class="tp">Produto</span>&gt; <span class="fn">findDisponiveis</span>();
+}</pre>
+  </div>
+</section>
+
+<!-- CAP 17 -->
+<section class="chapter" id="cap17">
+  <div class="chapter-header"><span class="chapter-num">17</span><h2 class="chapter-title" style="margin:0">API REST com Spring</h2></div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA — CONTROLLER COMPLETO</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="an">@RestController</span>
+<span class="an">@RequestMapping</span>(<span class="st">"/api/produtos"</span>)
+<span class="kw">public class</span> <span class="tp">ProdutoController</span> {
+
+    <span class="an">@Autowired</span>
+    <span class="kw">private</span> <span class="tp">ProdutoService</span> service;
+
+    <span class="an">@GetMapping</span>
+    <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">ProdutoDTO</span>&gt; <span class="fn">listar</span>() { <span class="kw">return</span> service.<span class="fn">listar</span>(); }
+
+    <span class="an">@GetMapping</span>(<span class="st">"/{id}"</span>)
+    <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">ProdutoDTO</span>&gt; <span class="fn">buscar</span>(<span class="an">@PathVariable</span> <span class="tp">Long</span> id) {
+        <span class="kw">return</span> service.<span class="fn">buscarPorId</span>(id)
+            .<span class="fn">map</span>(<span class="tp">ResponseEntity</span>::ok)
+            .<span class="fn">orElse</span>(<span class="tp">ResponseEntity</span>.<span class="fn">notFound</span>().<span class="fn">build</span>());
+    }
+
+    <span class="an">@PostMapping</span>
+    <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">ProdutoDTO</span>&gt; <span class="fn">criar</span>(<span class="an">@RequestBody @Valid</span> <span class="tp">ProdutoRequest</span> req) {
+        <span class="kw">var</span> salvo = service.<span class="fn">salvar</span>(req);
+        <span class="kw">return</span> <span class="tp">ResponseEntity</span>.<span class="fn">status</span>(<span class="nm">201</span>).<span class="fn">body</span>(salvo);
+    }
+
+    <span class="an">@PutMapping</span>(<span class="st">"/{id}"</span>)
+    <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">ProdutoDTO</span>&gt; <span class="fn">atualizar</span>(
+            <span class="an">@PathVariable</span> <span class="tp">Long</span> id, <span class="an">@RequestBody @Valid</span> <span class="tp">ProdutoRequest</span> req) {
+        <span class="kw">return</span> <span class="tp">ResponseEntity</span>.<span class="fn">ok</span>(service.<span class="fn">atualizar</span>(id, req));
+    }
+
+    <span class="an">@DeleteMapping</span>(<span class="st">"/{id}"</span>)
+    <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">Void</span>&gt; <span class="fn">deletar</span>(<span class="an">@PathVariable</span> <span class="tp">Long</span> id) {
+        service.<span class="fn">deletar</span>(id);
+        <span class="kw">return</span> <span class="tp">ResponseEntity</span>.<span class="fn">noContent</span>().<span class="fn">build</span>();
+    }
+}</pre>
+  </div>
+
+  <h2>Validação com Bean Validation</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public record</span> <span class="tp">ProdutoRequest</span>(
+    <span class="an">@NotBlank</span>(message = <span class="st">"Nome obrigatório"</span>)
+    <span class="an">@Size</span>(max = <span class="nm">100</span>)
+    <span class="tp">String</span> nome,
+
+    <span class="an">@NotNull</span>
+    <span class="an">@Positive</span>(message = <span class="st">"Preço deve ser positivo"</span>)
+    <span class="tp">BigDecimal</span> preco,
+
+    <span class="an">@Min</span>(<span class="nm">0</span>)
+    <span class="kw">int</span> estoque
+) {}</pre>
+  </div>
+</section>
+
+<!-- CAP 18 -->
+<section class="chapter" id="cap18">
+  <div class="chapter-header"><span class="chapter-num">18</span><h2 class="chapter-title" style="margin:0">Spring Security + JWT</h2></div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">pom.xml</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.auth0&lt;/groupId&gt;
+    &lt;artifactId&gt;java-jwt&lt;/artifactId&gt;
+    &lt;version&gt;<span class="nm">4.4.0</span>&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA — JWT SERVICE</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="tp">JwtService</span> {
+    <span class="an">@Value</span>(<span class="st">"${jwt.secret}"</span>)
+    <span class="kw">private</span> <span class="tp">String</span> secret;
+
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">gerarToken</span>(<span class="tp">Usuario</span> usuario) {
+        <span class="kw">return</span> <span class="tp">JWT</span>.<span class="fn">create</span>()
+            .<span class="fn">withIssuer</span>(<span class="st">"minha-api"</span>)
+            .<span class="fn">withSubject</span>(usuario.<span class="fn">getEmail</span>())
+            .<span class="fn">withExpiresAt</span>(<span class="tp">Instant</span>.<span class="fn">now</span>().<span class="fn">plus</span>(<span class="nm">2</span>, <span class="tp">ChronoUnit</span>.HOURS))
+            .<span class="fn">sign</span>(<span class="tp">Algorithm</span>.<span class="fn">HMAC256</span>(secret));
+    }
+
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">validarToken</span>(<span class="tp">String</span> token) {
+        <span class="kw">return</span> <span class="tp">JWT</span>.<span class="fn">require</span>(<span class="tp">Algorithm</span>.<span class="fn">HMAC256</span>(secret))
+            .<span class="fn">withIssuer</span>(<span class="st">"minha-api"</span>)
+            .<span class="fn">build</span>()
+            .<span class="fn">verify</span>(token)
+            .<span class="fn">getSubject</span>();
+    }
+}</pre>
+  </div>
+
+  <h2>Fluxo JWT</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">FLUXO</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">1. POST /auth/login  { email, senha }</span>
+<span class="cm">   └─ retorna: { token: "eyJ..." }</span>
+
+<span class="cm">2. GET /api/produtos</span>
+<span class="cm">   └─ Header: Authorization: Bearer eyJ...</span>
+<span class="cm">   └─ Filtro JWT valida e libera a requisição</span></pre>
+  </div>
+</section>
+
+<!-- CAP 19 — DESIGN PATTERNS -->
+<section class="chapter" id="cap19">
+  <div class="chapter-header"><span class="chapter-num">19</span><h2 class="chapter-title" style="margin:0">Design Patterns</h2></div>
+
+  <p>Padrões de projeto são soluções reutilizáveis para problemas comuns de software. Foram catalogados pelo "Gang of Four" (GoF) em 3 categorias:</p>
+
+  <div class="pattern-grid">
+    <div class="pattern-card">
+      <div class="pattern-tag creational">● Criacional</div>
+      <h4>Singleton</h4>
+      <p>Garante uma única instância de uma classe em toda a aplicação.</p>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-tag creational">● Criacional</div>
+      <h4>Builder</h4>
+      <p>Constrói objetos complexos passo a passo com API fluente.</p>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-tag creational">● Criacional</div>
+      <h4>Factory Method</h4>
+      <p>Define interface para criar objetos, subclasses decidem o tipo.</p>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-tag structural">● Estrutural</div>
+      <h4>Adapter</h4>
+      <p>Adapta interfaces incompatíveis para trabalhar juntas.</p>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-tag structural">● Estrutural</div>
+      <h4>Decorator</h4>
+      <p>Adiciona comportamentos a objetos dinamicamente.</p>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-tag behavioral">● Comportamental</div>
+      <h4>Strategy</h4>
+      <p>Define família de algoritmos intercambiáveis em tempo de execução.</p>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-tag behavioral">● Comportamental</div>
+      <h4>Observer</h4>
+      <p>Notifica múltiplos objetos quando o estado de um muda.</p>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-tag behavioral">● Comportamental</div>
+      <h4>Command</h4>
+      <p>Encapsula ações como objetos — suporta undo/redo.</p>
+    </div>
+  </div>
+
+  <h2>Singleton</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public class</span> <span class="tp">ConfiguracaoApp</span> {
+    <span class="cm">// volatile garante visibilidade entre threads</span>
+    <span class="kw">private static volatile</span> <span class="tp">ConfiguracaoApp</span> instancia;
+    <span class="kw">private</span> <span class="tp">String</span> ambiente = <span class="st">"producao"</span>;
+
+    <span class="kw">private</span> <span class="fn">ConfiguracaoApp</span>() {}  <span class="cm">// privado!</span>
+
+    <span class="cm">// Double-checked locking (thread-safe)</span>
+    <span class="kw">public static</span> <span class="tp">ConfiguracaoApp</span> <span class="fn">getInstance</span>() {
+        <span class="kw">if</span> (instancia == <span class="kw">null</span>) {
+            <span class="kw">synchronized</span> (<span class="tp">ConfiguracaoApp</span>.<span class="kw">class</span>) {
+                <span class="kw">if</span> (instancia == <span class="kw">null</span>) instancia = <span class="kw">new</span> <span class="tp">ConfiguracaoApp</span>();
+            }
+        }
+        <span class="kw">return</span> instancia;
+    }
+
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getAmbiente</span>() { <span class="kw">return</span> ambiente; }
+}</pre>
+  </div>
+
+  <h2>Builder</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public class</span> <span class="tp">Email</span> {
+    <span class="kw">private final</span> <span class="tp">String</span> para, assunto, corpo, cc;
+    <span class="kw">private final boolean</span> html;
+
+    <span class="kw">private</span> <span class="fn">Email</span>(<span class="tp">Builder</span> b) {
+        this.para = b.para; this.assunto = b.assunto;
+        this.corpo = b.corpo; this.cc = b.cc; this.html = b.html;
+    }
+
+    <span class="kw">public static class</span> <span class="tp">Builder</span> {
+        <span class="kw">private</span> <span class="tp">String</span> para, assunto, corpo, cc = <span class="st">""</span>;
+        <span class="kw">private boolean</span> html = <span class="kw">false</span>;
+
+        <span class="kw">public</span> <span class="tp">Builder</span> <span class="fn">para</span>(<span class="tp">String</span> p)     { this.para = p;     <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="tp">Builder</span> <span class="fn">assunto</span>(<span class="tp">String</span> a)  { this.assunto = a;  <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="tp">Builder</span> <span class="fn">corpo</span>(<span class="tp">String</span> c)    { this.corpo = c;    <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="tp">Builder</span> <span class="fn">cc</span>(<span class="tp">String</span> cc)     { this.cc = cc;      <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="tp">Builder</span> <span class="fn">html</span>()            { this.html = <span class="kw">true</span>;  <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="tp">Email</span>   <span class="fn">build</span>()           { <span class="kw">return new</span> <span class="tp">Email</span>(<span class="kw">this</span>); }
+    }
+}
+
+<span class="cm">// Uso — API fluente e legível</span>
+<span class="tp">Email</span> e = <span class="kw">new</span> <span class="tp">Email</span>.<span class="tp">Builder</span>()
+    .<span class="fn">para</span>(<span class="st">"cliente@email.com"</span>)
+    .<span class="fn">assunto</span>(<span class="st">"Bem-vindo!"</span>)
+    .<span class="fn">corpo</span>(<span class="st">"&lt;h1&gt;Olá!&lt;/h1&gt;"</span>)
+    .<span class="fn">html</span>()
+    .<span class="fn">build</span>();</pre>
+  </div>
+
+  <h2>Strategy</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// Interface da estratégia</span>
+<span class="kw">public interface</span> <span class="tp">CalculadorFrete</span> {
+    <span class="kw">double</span> <span class="fn">calcular</span>(<span class="kw">double</span> peso, <span class="tp">String</span> destino);
+}
+
+<span class="cm">// Implementações diferentes</span>
+<span class="kw">public class</span> <span class="tp">FreteExpresso</span> <span class="kw">implements</span> <span class="tp">CalculadorFrete</span> {
+    <span class="kw">public double</span> <span class="fn">calcular</span>(<span class="kw">double</span> peso, <span class="tp">String</span> destino) {
+        <span class="kw">return</span> peso * <span class="nm">15.0</span> + <span class="nm">20.0</span>;
+    }
+}
+
+<span class="kw">public class</span> <span class="tp">FreteEconomico</span> <span class="kw">implements</span> <span class="tp">CalculadorFrete</span> {
+    <span class="kw">public double</span> <span class="fn">calcular</span>(<span class="kw">double</span> peso, <span class="tp">String</span> destino) {
+        <span class="kw">return</span> peso * <span class="nm">5.0</span>;
+    }
+}
+
+<span class="cm">// Contexto que usa a estratégia</span>
+<span class="kw">public class</span> <span class="tp">Pedido</span> {
+    <span class="kw">private</span> <span class="tp">CalculadorFrete</span> frete;
+
+    <span class="kw">public void</span> <span class="fn">setFrete</span>(<span class="tp">CalculadorFrete</span> f) { <span class="kw">this</span>.frete = f; }
+
+    <span class="kw">public double</span> <span class="fn">calcularFrete</span>(<span class="kw">double</span> peso, <span class="tp">String</span> destino) {
+        <span class="kw">return</span> frete.<span class="fn">calcular</span>(peso, destino);
+    }
+}
+
+<span class="cm">// Uso — troca estratégia em tempo de execução</span>
+<span class="tp">Pedido</span> pedido = <span class="kw">new</span> <span class="tp">Pedido</span>();
+pedido.<span class="fn">setFrete</span>(<span class="kw">new</span> <span class="tp">FreteExpresso</span>());
+pedido.<span class="fn">calcularFrete</span>(<span class="nm">2.5</span>, <span class="st">"SP"</span>); <span class="cm">// 57.5</span>
+
+pedido.<span class="fn">setFrete</span>(<span class="kw">new</span> <span class="tp">FreteEconomico</span>());
+pedido.<span class="fn">calcularFrete</span>(<span class="nm">2.5</span>, <span class="st">"SP"</span>); <span class="cm">// 12.5</span>
+
+<span class="cm">// Com lambdas — ainda mais limpo!</span>
+pedido.<span class="fn">setFrete</span>((peso, dest) -> peso * <span class="nm">10.0</span>);</pre>
+  </div>
+
+  <h2>Observer</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// Observer (Listener)</span>
+<span class="kw">public interface</span> <span class="tp">PedidoListener</span> {
+    <span class="kw">void</span> <span class="fn">aoConfirmar</span>(<span class="tp">Pedido</span> pedido);
+}
+
+<span class="cm">// Subject — notifica os observers</span>
+<span class="kw">public class</span> <span class="tp">GerenciadorPedidos</span> {
+    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">PedidoListener</span>&gt; listeners = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public void</span> <span class="fn">addListener</span>(<span class="tp">PedidoListener</span> l) { listeners.<span class="fn">add</span>(l); }
+
+    <span class="kw">public void</span> <span class="fn">confirmarPedido</span>(<span class="tp">Pedido</span> pedido) {
+        <span class="cm">// salvar pedido...</span>
+        listeners.<span class="fn">forEach</span>(l -> l.<span class="fn">aoConfirmar</span>(pedido)); <span class="cm">// notifica todos</span>
+    }
+}
+
+<span class="cm">// Registrando observers (com lambda)</span>
+<span class="tp">GerenciadorPedidos</span> gp = <span class="kw">new</span> <span class="tp">GerenciadorPedidos</span>();
+gp.<span class="fn">addListener</span>(p -> emailService.<span class="fn">enviarConfirmacao</span>(p));
+gp.<span class="fn">addListener</span>(p -> estoque.<span class="fn">reservar</span>(p));
+gp.<span class="fn">addListener</span>(p -> log.<span class="fn">registrar</span>(p));</pre>
+  </div>
+
+  <h2>Factory Method</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public interface</span> <span class="tp">Notificacao</span> { <span class="kw">void</span> <span class="fn">enviar</span>(<span class="tp">String</span> msg); }
+
+<span class="kw">public class</span> <span class="tp">Email</span> <span class="kw">implements</span> <span class="tp">Notificacao</span> {
+    <span class="kw">public void</span> <span class="fn">enviar</span>(<span class="tp">String</span> msg) { <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"📧 Email: "</span> + msg); }
+}
+<span class="kw">public class</span> <span class="tp">SMS</span> <span class="kw">implements</span> <span class="tp">Notificacao</span> {
+    <span class="kw">public void</span> <span class="fn">enviar</span>(<span class="tp">String</span> msg) { <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"📱 SMS: "</span> + msg); }
+}
+<span class="kw">public class</span> <span class="tp">Push</span> <span class="kw">implements</span> <span class="tp">Notificacao</span> {
+    <span class="kw">public void</span> <span class="fn">enviar</span>(<span class="tp">String</span> msg) { <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="st">"🔔 Push: "</span> + msg); }
+}
+
+<span class="cm">// Factory — centraliza a criação</span>
+<span class="kw">public class</span> <span class="tp">NotificacaoFactory</span> {
+    <span class="kw">public static</span> <span class="tp">Notificacao</span> <span class="fn">criar</span>(<span class="tp">String</span> tipo) {
+        <span class="kw">return switch</span> (tipo.<span class="fn">toLowerCase</span>()) {
+            <span class="kw">case</span> <span class="st">"email"</span> -> <span class="kw">new</span> <span class="tp">Email</span>();
+            <span class="kw">case</span> <span class="st">"sms"</span>   -> <span class="kw">new</span> <span class="tp">SMS</span>();
+            <span class="kw">case</span> <span class="st">"push"</span>  -> <span class="kw">new</span> <span class="tp">Push</span>();
+            <span class="kw">default</span> -> <span class="kw">throw new</span> <span class="tp">IllegalArgumentException</span>(<span class="st">"Tipo inválido"</span>);
+        };
+    }
+}
+
+<span class="cm">// Uso — cliente não sabe qual classe concreta usa</span>
+<span class="tp">Notificacao</span> n = <span class="tp">NotificacaoFactory</span>.<span class="fn">criar</span>(<span class="st">"sms"</span>);
+n.<span class="fn">enviar</span>(<span class="st">"Seu pedido foi confirmado!"</span>); <span class="cm">// 📱 SMS: Seu pedido foi confirmado!</span></pre>
+  </div>
+
+  <h2>Decorator</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="kw">public interface</span> <span class="tp">TextoProcessador</span> {
+    <span class="tp">String</span> <span class="fn">processar</span>(<span class="tp">String</span> texto);
+}
+
+<span class="cm">// Implementação base</span>
+<span class="kw">public class</span> <span class="tp">TextoSimples</span> <span class="kw">implements</span> <span class="tp">TextoProcessador</span> {
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">processar</span>(<span class="tp">String</span> t) { <span class="kw">return</span> t; }
+}
+
+<span class="cm">// Decoradores</span>
+<span class="kw">public class</span> <span class="tp">MaiusculasDecorator</span> <span class="kw">implements</span> <span class="tp">TextoProcessador</span> {
+    <span class="kw">private</span> <span class="tp">TextoProcessador</span> wrapped;
+    <span class="kw">public</span> <span class="fn">MaiusculasDecorator</span>(<span class="tp">TextoProcessador</span> t) { wrapped = t; }
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">processar</span>(<span class="tp">String</span> t) { <span class="kw">return</span> wrapped.<span class="fn">processar</span>(t).<span class="fn">toUpperCase</span>(); }
+}
+
+<span class="kw">public class</span> <span class="tp">TrimDecorator</span> <span class="kw">implements</span> <span class="tp">TextoProcessador</span> {
+    <span class="kw">private</span> <span class="tp">TextoProcessador</span> wrapped;
+    <span class="kw">public</span> <span class="fn">TrimDecorator</span>(<span class="tp">TextoProcessador</span> t) { wrapped = t; }
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">processar</span>(<span class="tp">String</span> t) { <span class="kw">return</span> wrapped.<span class="fn">processar</span>(t.<span class="fn">trim</span>()); }
+}
+
+<span class="cm">// Empilhando decoradores — como camadas</span>
+<span class="tp">TextoProcessador</span> processador = <span class="kw">new</span> <span class="tp">MaiusculasDecorator</span>(
+    <span class="kw">new</span> <span class="tp">TrimDecorator</span>(
+        <span class="kw">new</span> <span class="tp">TextoSimples</span>()
+    )
+);
+processador.<span class="fn">processar</span>(<span class="st">"  hello world  "</span>); <span class="cm">// HELLO WORLD</span></pre>
+  </div>
+</section>
+
+<!-- CAP 20 -->
+<section class="chapter" id="cap20">
+  <div class="chapter-header"><span class="chapter-num">20</span><h2 class="chapter-title" style="margin:0">Testes com JUnit 5</h2></div>
+
+  <p>Testes são essenciais em projetos profissionais. JUnit 5 é o framework padrão para testes em Java. Mockito é usado para simular dependências.</p>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">pom.xml</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+    <span class="cm">&lt;!-- inclui JUnit 5 + Mockito + AssertJ --&gt;</span>
+&lt;/dependency&gt;</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA — TESTE UNITÁRIO</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="an">@ExtendWith</span>(<span class="tp">MockitoExtension</span>.<span class="kw">class</span>)
+<span class="kw">class</span> <span class="tp">ProdutoServiceTest</span> {
+
+    <span class="an">@Mock</span>
+    <span class="kw">private</span> <span class="tp">ProdutoRepository</span> repository;
+
+    <span class="an">@InjectMocks</span>
+    <span class="kw">private</span> <span class="tp">ProdutoService</span> service;
+
+    <span class="an">@Test</span>
+    <span class="an">@DisplayName</span>(<span class="st">"Deve salvar produto com sucesso"</span>)
+    <span class="kw">void</span> <span class="fn">deveSalvarProduto</span>() {
+        <span class="cm">// Arrange</span>
+        <span class="kw">var</span> produto = <span class="kw">new</span> <span class="tp">Produto</span>(<span class="st">"Café"</span>, <span class="kw">new</span> <span class="tp">BigDecimal</span>(<span class="st">"29.90"</span>), <span class="nm">100</span>);
+        <span class="fn">when</span>(repository.<span class="fn">save</span>(<span class="fn">any</span>())).<span class="fn">thenReturn</span>(produto);
+
+        <span class="cm">// Act</span>
+        <span class="kw">var</span> resultado = service.<span class="fn">salvar</span>(produto);
+
+        <span class="cm">// Assert</span>
+        <span class="fn">assertThat</span>(resultado.<span class="fn">getNome</span>()).<span class="fn">isEqualTo</span>(<span class="st">"Café"</span>);
+        <span class="fn">verify</span>(repository, <span class="fn">times</span>(<span class="nm">1</span>)).<span class="fn">save</span>(produto);
+    }
+
+    <span class="an">@Test</span>
+    <span class="an">@DisplayName</span>(<span class="st">"Deve lançar exceção com preço negativo"</span>)
+    <span class="kw">void</span> <span class="fn">deveLancarExcecaoComPrecoNegativo</span>() {
+        <span class="kw">var</span> produto = <span class="kw">new</span> <span class="tp">Produto</span>(<span class="st">"X"</span>, <span class="kw">new</span> <span class="tp">BigDecimal</span>(<span class="st">"-1"</span>), <span class="nm">10</span>);
+
+        <span class="fn">assertThrows</span>(<span class="tp">IllegalArgumentException</span>.<span class="kw">class</span>,
+            () -> service.<span class="fn">salvar</span>(produto));
+    }
+
+    <span class="an">@ParameterizedTest</span>
+    <span class="an">@ValueSource</span>(ints = {<span class="nm">-1</span>, <span class="nm">0</span>, <span class="nm">-100</span>})
+    <span class="kw">void</span> <span class="fn">deveRejeitar</span>(<span class="kw">int</span> preco) {
+        <span class="cm">// testa com múltiplos valores automaticamente</span>
+        <span class="fn">assertThrows</span>(<span class="tp">Exception</span>.<span class="kw">class</span>,
+            () -> service.<span class="fn">validarPreco</span>(<span class="kw">new</span> <span class="tp">BigDecimal</span>(preco)));
+    }
+}</pre>
+  </div>
+</section>
+
+<!-- CAP 21 -->
+<section class="chapter" id="cap21">
+  <div class="chapter-header"><span class="chapter-num">21</span><h2 class="chapter-title" style="margin:0">Boas Práticas e SOLID</h2></div>
+
+  <h2>SOLID</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Princípio</th><th>Letra</th><th>Regra</th></tr>
+    <tr><td>Single Responsibility</td><td>S</td><td>Uma classe, uma razão para mudar.</td></tr>
+    <tr><td>Open/Closed</td><td>O</td><td>Aberta para extensão, fechada para modificação.</td></tr>
+    <tr><td>Liskov Substitution</td><td>L</td><td>Subclasses substituem o pai sem quebrar o sistema.</td></tr>
+    <tr><td>Interface Segregation</td><td>I</td><td>Muitas interfaces específicas > uma grande.</td></tr>
+    <tr><td>Dependency Inversion</td><td>D</td><td>Dependa de abstrações, não de implementações.</td></tr>
+  </table></div>
+
+  <h2>Clean Code na Prática</h2>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span class="code-lang">JAVA — BOAS PRÁTICAS</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+    <pre><span class="cm">// ❌ Ruim</span>
+<span class="kw">public boolean</span> <span class="fn">check</span>(<span class="tp">User</span> u) {
+    <span class="kw">if</span> (u != <span class="kw">null</span> && u.<span class="fn">getAge</span>() >= <span class="nm">18</span> && u.<span class="fn">isActive</span>() && !u.<span class="fn">isBanned</span>())
+        <span class="kw">return true</span>;
+    <span class="kw">return false</span>;
+}
+
+<span class="cm">// ✅ Bom</span>
+<span class="kw">public boolean</span> <span class="fn">podeAcessar</span>(<span class="tp">Usuario</span> usuario) {
+    <span class="kw">return</span> usuario != <span class="kw">null</span>
+        && usuario.<span class="fn">ehMaiorDeIdade</span>()
+        && usuario.<span class="fn">estaAtivo</span>()
+        && !usuario.<span class="fn">estaBanido</span>();
+}
+
+<span class="cm">// Fail-fast — valide logo no início</span>
+<span class="kw">public void</span> <span class="fn">processarPagamento</span>(<span class="tp">Pagamento</span> p) {
+    <span class="tp">Objects</span>.<span class="fn">requireNonNull</span>(p, <span class="st">"Pagamento não pode ser nulo"</span>);
+    <span class="kw">if</span> (p.<span class="fn">getValor</span>().<span class="fn">signum</span>() <= <span class="nm">0</span>)
+        <span class="kw">throw new</span> <span class="tp">IllegalArgumentException</span>(<span class="st">"Valor inválido"</span>);
+    <span class="cm">// lógica principal...</span>
+}
+
+<span class="cm">// Prefer imutabilidade</span>
+<span class="kw">public record</span> <span class="tp">Ponto</span>(<span class="kw">double</span> x, <span class="kw">double</span> y) {
+    <span class="kw">public</span> <span class="tp">Ponto</span> <span class="fn">mover</span>(<span class="kw">double</span> dx, <span class="kw">double</span> dy) {
+        <span class="kw">return new</span> <span class="tp">Ponto</span>(x + dx, y + dy); <span class="cm">// novo objeto, não muta</span>
+    }
+}</pre>
+  </div>
+</section>
+
+<!-- CAP 22 -->
+<section class="chapter" id="cap22">
+  <div class="chapter-header"><span class="chapter-num">22</span><h2 class="chapter-title" style="margin:0">Próximos Passos</h2></div>
+
+  <div class="topics-grid">
+    <div class="topic-card"><div class="icon">🐳</div><h4>Docker</h4><p>Containerize suas aplicações Java</p></div>
+    <div class="topic-card"><div class="icon">☁️</div><h4>Cloud</h4><p>Deploy na AWS, GCP ou Azure</p></div>
+    <div class="topic-card"><div class="icon">🔄</div><h4>CI/CD</h4><p>GitHub Actions, Jenkins</p></div>
+    <div class="topic-card"><div class="icon">📨</div><h4>Kafka</h4><p>Mensageria e eventos assíncronos</p></div>
+    <div class="topic-card"><div class="icon">📊</div><h4>Observabilidade</h4><p>Prometheus, Grafana, Jaeger</p></div>
+    <div class="topic-card"><div class="icon">🏗️</div><h4>Microsserviços</h4><p>Spring Cloud, Eureka, Gateway</p></div>
+  </div>
+
+  <h2>Roadmap de Estudos</h2>
+  <div class="roadmap">
+    <div class="roadmap-item">
+      <div class="roadmap-label">Mês 1-3 · Iniciante</div>
+      <h4>Fundamentos Sólidos</h4>
+      <p>Capítulos 1-8 deste manual. Crie projetos simples: calculadora, CRUD de lista de tarefas, catálogo de livros.</p>
+    </div>
+    <div class="roadmap-item mid">
+      <div class="roadmap-label">Mês 3-6 · Intermediário</div>
+      <h4>Spring Boot + Banco + Testes</h4>
+      <p>Construa uma API REST completa com autenticação JWT, banco MySQL e cobertura de testes acima de 80%.</p>
+    </div>
+    <div class="roadmap-item adv">
+      <div class="roadmap-label">Mês 6-12 · Avançado</div>
+      <h4>Arquitetura e Ecossistema</h4>
+      <p>Microsserviços, Docker, CI/CD, mensageria, observabilidade e padrões arquiteturais como Clean Architecture.</p>
+    </div>
+  </div>
+
+  <h2>Recursos Recomendados</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Recurso</th><th>Tipo</th><th>Onde encontrar</th></tr>
+    <tr><td>Effective Java</td><td>📚 Livro</td><td>Joshua Bloch — leitura obrigatória</td></tr>
+    <tr><td>Clean Code</td><td>📚 Livro</td><td>Robert Martin — sobre boas práticas</td></tr>
+    <tr><td>Spring.io Guides</td><td>🌐 Site</td><td>spring.io/guides</td></tr>
+    <tr><td>Baeldung</td><td>🌐 Site</td><td>baeldung.com</td></tr>
+    <tr><td>Java Docs</td><td>📄 Docs</td><td>docs.oracle.com/en/java</td></tr>
+    <tr><td>Alura</td><td>🎓 Curso PT-BR</td><td>alura.com.br</td></tr>
+    <tr><td>HackerRank</td><td>💻 Prática</td><td>hackerrank.com/domains/java</td></tr>
+  </table></div>
+
+  <div class="callout success">
+    <div class="callout-title">🎯 Dica Final</div>
+    <p>A melhor forma de aprender é <strong>construindo projetos reais</strong>. Escolha um problema que você tem no dia a dia e tente resolver com Java. Não espere saber tudo — comece, erre, aprenda, melhore. A comunidade Java é gigante: Stack Overflow, GitHub, Reddit (r/java) estão cheios de recursos e pessoas dispostas a ajudar.</p>
+  </div>
+</section>
+
+</div><!-- /content -->
+
+<footer class="footer">
+  <p>☕ Java — Do Zero ao Avançado &nbsp;·&nbsp; <span>22 Capítulos</span> &nbsp;·&nbsp; Bons estudos!</p>
+</footer>
+
+</main>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+});
+
+// Active nav item
+const navItems = document.querySelectorAll('.nav-item');
+const chapters = document.querySelectorAll('.chapter');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(n => {
+        n.classList.toggle('active', n.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+chapters.forEach(c => observer.observe(c));
+
+// Copy code
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = '✓ copiado';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => {
+      btn.textContent = 'copiar';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1800);
+  });
+}
+
+// Search nav
+function filterNav(q) {
+  const lower = q.toLowerCase();
+  navItems.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(lower) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
